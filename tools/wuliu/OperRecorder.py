@@ -111,7 +111,8 @@ class OperRecorder():
         nowTime = timer.trans_unix_to_datetime(dataSaver.time)
         # 计算到达商户取出餐的时间
         goShop = math.ceil(
-                base_few.Mercator.getDistance([riderX, riderY], [shopX, shopY])/riderSpeed
+                base_few.Mercator.getDistance(
+                    [float(riderX), float(riderY)], [float(shopX), float(shopY)])/riderSpeed
                 )
         goShopTime = timer.add_second_datetime(nowTime, goShop)
         goMealTime = timer.add_second_datetime(orderTime, mealTime)
@@ -121,7 +122,8 @@ class OperRecorder():
             shopTime = goMealTime
         # 计算取到餐到用户的时间
         goUser = math.ceil(
-                base_few.Mercator.getDistance([shopX, shopY], [userX, userY])/riderSpeed
+                base_few.Mercator.getDistance(
+                    [float(shopX), float(shopY)], [float(userX), float(userY)])/riderSpeed
                 )
         goUserTime = timer.add_second_datetime(shopTime, goUser)
         finishTime = timer.trans_datetime_to_unix(goUserTime)

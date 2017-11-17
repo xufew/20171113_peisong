@@ -25,3 +25,4 @@ combine_thres = 5
 # 输出骑士操作信息路径
 oper_info_path = '{}/out/oper_info'.format(ABS_PATH)
 oper_info_total_path = '{}/out/oper_info_total'.format(ABS_PATH)
+oper_info_test = '{}/out/oper_info_test'.format(ABS_PATH)

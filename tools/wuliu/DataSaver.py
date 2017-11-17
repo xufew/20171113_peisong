@@ -5,6 +5,7 @@
 # ============
 import sys
 sys.path.append('../../')
+import json
 
 import pandas as pd
 
@@ -30,13 +31,13 @@ class DataSaver():
         储存骑士的基本信息
         '''
         for thisSet in riderValue:
-            riderId = thisSet[0]
-            aoiId = thisSet[1]
-            mcx = float(thisSet[2])
-            mcy = float(thisSet[3])
-            maxLoad = thisSet[4]
-            minComplete = thisSet[5]
-            speed = thisSet[6]
+            riderId = thisSet['rider_id']
+            aoiId = thisSet['aoi_id']
+            mcx = thisSet['mcx']
+            mcy = thisSet['mcy']
+            maxLoad = thisSet['max_load']
+            minComplete = thisSet['min_complete']
+            speed = thisSet['speed']
             self.riderFrame[riderId] = {
                     'riderId': riderId,
                     'aoiId': aoiId,
@@ -59,30 +60,30 @@ class DataSaver():
 
     def save_order_info(self, orderSet):
         for thisSet in orderSet:
-            orderId = thisSet[0]
-            orderTime = thisSet[1]
-            shopAoi = thisSet[2]
-            shopId = thisSet[3]
-            shopMcx = thisSet[4]
-            shopMcy = thisSet[5]
-            userAoi = thisSet[6]
-            userId = thisSet[7]
-            userMcx = thisSet[8]
-            userMcy = thisSet[9]
-            waitSecs = thisSet[10]
-            immediateDeliver = thisSet[11]
-            expectTime = thisSet[12]
+            orderId = thisSet['order_id']
+            orderTime = thisSet['order_time']
+            shopAoi = thisSet['shop_aoi_id']
+            shopId = thisSet['shop_id']
+            shopMcx = thisSet['shop_mcx']
+            shopMcy = thisSet['shop_mcy']
+            userAoi = thisSet['user_aoi_id']
+            userId = thisSet['user_id']
+            userMcx = thisSet['user_mcx']
+            userMcy = thisSet['user_mcy']
+            waitSecs = thisSet['wait_secs']
+            immediateDeliver = thisSet['immediate_deliver']
+            expectTime = thisSet['expect_time']
             self.orderDic[orderId] = {
                     'orderId': orderId,
                     'orderTime': orderTime,
                     'shopAoi': shopAoi,
                     'shopId': shopId,
-                    'shopMcx': float(shopMcx),
-                    'shopMcy': float(shopMcy),
+                    'shopMcx': shopMcx,
+                    'shopMcy': shopMcy,
                     'userAoi': userAoi,
                     'userId': userId,
-                    'userMcx': float(userMcx),
-                    'userMcy': float(userMcy),
+                    'userMcx': userMcx,
+                    'userMcy': userMcy,
                     'waitSecs': waitSecs,
                     'immediateDeliver': immediateDeliver,
                     'expectTime': expectTime,
@@ -154,3 +155,21 @@ class DataSaver():
         self.processingDic.pop(finishOrderId)
         self.finishDic[finishOrderId] = copyDic
         self.finishDic[finishOrderId]['processStatus'] = 'finish'
+
+    def test_save(self):
+        with open(Config.oper_info_test, 'wb') as fileWriter:
+            fileWriter.write(
+                    '{}\n'.format(json.dumps(self.orderDic)).encode('utf8')
+                    )
+            fileWriter.write(
+                    '{}\n'.format(json.dumps(self.fenpeiDic)).encode('utf8')
+                    )
+            fileWriter.write(
+                    '{}\n'.format(json.dumps(self.processingDic)).encode('utf8')
+                    )
+            fileWriter.write(
+                    '{}\n'.format(json.dumps(self.finishDic)).encode('utf8')
+                    )
+            fileWriter.write(
+                    '{}\n'.format(json.dumps(self.riderFrame)).encode('utf8')
+                    )

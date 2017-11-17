@@ -5,6 +5,7 @@
 # ============
 import sys
 sys.path.append('../../')
+import json
 
 import pandas as pd
 
@@ -18,6 +19,7 @@ class DataProducer():
     '''
     def __init__(self):
         self.time = 0
+        self.endtime = 0
         self.table = base_few.DaoBase(
                 host='127.0.0.1',
                 port=3306,
@@ -27,11 +29,19 @@ class DataProducer():
                 table='delivery_moniter'
                 )
         self.timer = base_few.Timer()
+        self.queryer = base_few.HttpQuery(0)
 
     def count_first_time(self):
         '''
         计算首次有单时间
         '''
+        result = self.queryer.send_query('http://server/api/orders/time-range')
+        self.time = result['data']['from']
+        self.endtime = self.timer.trans_datetime_to_unix(
+                self.timer.add_second_datetime(
+                    self.timer.trans_unix_to_datetime(result['data']['to']), 7200
+                    )
+                )
 
     def count_first_time_sql(self):
         '''
@@ -46,6 +56,26 @@ class DataProducer():
         '''
         生成一分钟的订单数据
         '''
+        rangeTime = Config.order_time_range
+        # 计算所派订单时间段
+        startUnix = self.time
+        startTime = self.timer.trans_unix_to_datetime(self.time)
+        endTime = self.timer.add_second_datetime(startTime, rangeTime)
+        endUnix = self.timer.trans_datetime_to_unix(endTime)
+        print(startTime)
+        print(endTime)
+        # 获取订单
+        getData = {
+                'from': startUnix,
+                'to': endUnix,
+                'skip': 0,
+                'size': 10000,
+                }
+        url = 'http://server/api/orders'
+        orderValue = self.queryer.send_query(url, data=getData)['data']
+        # 计时器替换，时间过了range分钟
+        self.time = endUnix
+        return orderValue
 
     def produce_order_sql(self):
         '''
@@ -74,6 +104,10 @@ class DataProducer():
         用来第一次获取全部骑士信息
         rider_id,aoi_id,mcx,mcy,max_load,min_complete,speed
         '''
+        url = 'http://server/api/riders'
+        result = self.queryer.send_query(url)
+        outValue = result['data']
+        return outValue
 
     def produce_rider_sql(self, limit_num=0):
         '''
@@ -90,3 +124,45 @@ class DataProducer():
                     'select * from rider'
                     )
         return outValue
+
+    def post_trace(self):
+        '''
+        上传骑士的路径
+        '''
+        postList = []
+        with open(Config.oper_info_path, 'rb') as fileReader:
+            while True:
+                stringLine = fileReader.readline().decode('utf8')
+                if stringLine:
+                    stringList = stringLine.strip().split('\t')
+                    rider_2_id = stringList[1]
+                    if len(rider_2_id) != 0:
+                        postList.append(
+                                {
+                                    'rider_id': int(stringList[0]),
+                                    'rider_2_id': int(stringList[1]),
+                                    'order_id': int(stringList[2]),
+                                    'mcx': stringList[3],
+                                    'mcy': stringList[4],
+                                    't': int(stringList[5]),
+                                    'action': int(stringList[6]),
+                                    }
+                                )
+                    else:
+                        postList.append(
+                                {
+                                    'rider_id': int(stringList[0]),
+                                    'order_id': int(stringList[2]),
+                                    'mcx': stringList[3],
+                                    'mcy': stringList[4],
+                                    't': int(stringList[5]),
+                                    'action': int(stringList[6]),
+                                    }
+                                )
+                else:
+                    break
+        if len(postList) == 0:
+            pass
+        else:
+            url = 'http://server/api/traces'
+            result = self.queryer.post_query(url, json.dumps(postList))
