@@ -20,14 +20,14 @@ class DataProducer():
     def __init__(self):
         self.time = 0
         self.endtime = 0
-        self.table = base_few.DaoBase(
-                host='127.0.0.1',
-                port=3306,
-                user='root',
-                passwd='hui182014734',
-                db='wuliu',
-                table='delivery_moniter'
-                )
+        # self.table = base_few.DaoBase(
+        #         host='127.0.0.1',
+        #         port=3306,
+        #         user='root',
+        #         passwd='hui182014734',
+        #         db='wuliu',
+        #         table='delivery_moniter'
+        #         )
         self.timer = base_few.Timer()
         self.queryer = base_few.HttpQuery(0)
 
