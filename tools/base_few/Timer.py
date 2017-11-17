@@ -166,3 +166,23 @@ class Timer:
         dtime = datetime.datetime.now()
         dateS = self.trans_date_S(dtime, format)
         return dateS
+
+    def trans_unix_to_datetime(self, unixInt):
+        '''
+        unix 转 datetime形式
+        '''
+        if type(unixInt)!=type(0):
+            unixInt = int(unixInt)
+        time = datetime.datetime.fromtimestamp(unixInt)
+        return time
+
+    def trans_datetime_to_unix(self, datetimeUse):
+        '''
+        unix 转 datetime形式
+        '''
+        unixTime = time.mktime(datetimeUse.timetuple())
+        return int(unixTime)
+
+    def add_second_datetime(self, inputTime, addSecond):
+        finishTime = inputTime+datetime.timedelta(seconds=addSecond)
+        return finishTime
