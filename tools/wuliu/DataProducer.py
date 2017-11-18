@@ -20,22 +20,17 @@ class DataProducer():
     def __init__(self):
         self.time = 0
         self.endtime = 0
-        # self.table = base_few.DaoBase(
-        #         host='127.0.0.1',
-        #         port=3306,
-        #         user='root',
-        #         passwd='hui182014734',
-        #         db='wuliu',
-        #         table='delivery_moniter'
-        #         )
         self.timer = base_few.Timer()
         self.queryer = base_few.HttpQuery(0)
+        self.server = 'http://server'
+        # self.server = 'http://127.0.0.1'
 
     def count_first_time(self):
         '''
         计算首次有单时间
         '''
-        result = self.queryer.send_query('http://server/api/orders/time-range')
+        url = '{}/{}'.format(self.server, 'api/orders/time-range')
+        result = self.queryer.send_query(url)
         self.time = result['data']['from']
         self.endtime = self.timer.trans_datetime_to_unix(
                 self.timer.add_second_datetime(
@@ -71,7 +66,7 @@ class DataProducer():
                 'skip': 0,
                 'size': 10000,
                 }
-        url = 'http://server/api/orders'
+        url = '{}/{}'.format(self.server, 'api/orders')
         orderValue = self.queryer.send_query(url, data=getData)['data']
         # 计时器替换，时间过了range分钟
         self.time = endUnix
@@ -104,7 +99,7 @@ class DataProducer():
         用来第一次获取全部骑士信息
         rider_id,aoi_id,mcx,mcy,max_load,min_complete,speed
         '''
-        url = 'http://server/api/riders'
+        url = '{}/{}'.format(self.server, 'api/riders')
         result = self.queryer.send_query(url)
         outValue = result['data']
         return outValue
@@ -164,5 +159,5 @@ class DataProducer():
         if len(postList) == 0:
             pass
         else:
-            url = 'http://server/api/traces'
+            url = '{}/{}'.format(self.server, 'api/traces')
             result = self.queryer.post_query(url, json.dumps(postList))
