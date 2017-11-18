@@ -5,6 +5,8 @@
 # ============
 import sys
 
+import numpy as np
+
 import Config
 sys.path.append(Config.base_few_path)
 import base_few
@@ -19,7 +21,8 @@ def get_score_order_rider(
     '''
     outScore = 0
     con1 = type(orderId) is type(1)
-    if con1:
+    con2 = type(orderId) is type(np.int)
+    if con1 or con2:
         # 获取相关有用数据
         shopX = orderDic[orderId]['shopMcx']
         shopY = orderDic[orderId]['shopMcy']

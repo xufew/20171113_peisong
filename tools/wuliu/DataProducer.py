@@ -23,7 +23,7 @@ class DataProducer():
         self.timer = base_few.Timer()
         self.queryer = base_few.HttpQuery(0)
         self.server = 'http://server'
-        # self.server = 'http://127.0.0.1'
+        # self.server = 'http://192.168.108.129'
 
     def count_first_time(self):
         '''
