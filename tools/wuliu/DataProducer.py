@@ -23,7 +23,7 @@ class DataProducer():
         self.changeTime = 0             # 时间转换点,从全局到商圈
         self.timer = base_few.Timer()
         self.queryer = base_few.HttpQuery(0)
-        self.server = 'http://server'
+        self.server = 'http://server:80'
         # self.server = 'http://192.168.108.129'
 
     def count_first_time(self):

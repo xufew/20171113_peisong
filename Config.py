@@ -31,7 +31,7 @@ oper_info_total_path = '{}/out/oper_info_total'.format(ABS_PATH)
 oper_info_test = '{}/out/oper_info_test'.format(ABS_PATH)
 
 # 骑士打分权重
-score_distance = 2
+score_distance = 1
 score_not_ten = 8
 score_exact_finish = 2
 score_time_score = 1
