@@ -20,6 +20,7 @@ class DataProducer():
     def __init__(self):
         self.time = 0
         self.endtime = 0
+        self.changeTime = 0             # 时间转换点,从全局到商圈
         self.timer = base_few.Timer()
         self.queryer = base_few.HttpQuery(0)
         self.server = 'http://server'
@@ -46,6 +47,28 @@ class DataProducer():
                 'select min(order_time) from `order`'
                 )[0][0]
         self.time = minTime
+
+    def count_data_dis(self):
+        '''
+        计算数据的订单出现分布，为后续同商圈，不满足10单做准备
+        '''
+        startTime = self.time
+        endTime = self.endtime
+        url = '{}/{}'.format(self.server, 'api/orders/count')
+        rangeTime = 1800
+        totalValue = 0
+        while True:
+            thisEnd = self.timer.trans_unix_to_datetime(endTime)
+            thisStart = self.timer.trans_datetime_to_unix(
+                    self.timer.add_second_datetime(thisEnd, -1800)
+                    )
+            data = {'from': thisStart, 'to': endTime}
+            value = self.queryer.send_query(url, data=data)['data']
+            endTime = thisStart
+            totalValue += value
+            if totalValue > Config.change_time_thres:
+                self.changeTime = endTime
+                break
 
     def produce_order(self):
         '''

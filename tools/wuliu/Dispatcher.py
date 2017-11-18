@@ -106,7 +106,7 @@ class Dispatcher():
                 for thisRider in riderList:
                     thisScore = OrderRiderScore.get_score_order_rider(
                             orderDic, riderFrame, thisOrder,
-                            thisRider, similarSet, dataSaver.time
+                            thisRider, similarSet, dataSaver.time, aoiType
                             )
                     outMatrixDic['1'][thisOrder][thisRider] = thisScore
         elif aoiType == 'same':
@@ -122,7 +122,7 @@ class Dispatcher():
                         continue
                     thisScore = OrderRiderScore.get_score_order_rider(
                             orderDic, riderFrame, thisOrder,
-                            thisRider, similarSet, dataSaver.time
+                            thisRider, similarSet, dataSaver.time, aoiType
                             )
                     outMatrixDic[orderAoi][thisOrder][thisRider] = thisScore
         return True, outMatrixDic
@@ -134,7 +134,7 @@ class Dispatcher():
         '''
         orderIdList = list(orderRiderMatrix.index)
         riderIdList = list(orderRiderMatrix.columns)
-        noDisMatrix = 10000-orderRiderMatrix
+        noDisMatrix = 100-orderRiderMatrix
         orderNum = noDisMatrix.shape[0]
         freeRiderNum = noDisMatrix.shape[1]
         if (orderNum==0) or (freeRiderNum==0):

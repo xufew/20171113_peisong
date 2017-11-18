@@ -56,6 +56,7 @@ class DataSaver():
                     'hasOrderNum': 0,
                     'processOrder': -1,                 # 正在处理的订单
                     'finishTime': -1,                   # 配送订单完成时间
+                    'nowAoi': -1,                       # 现在所处商圈
                     }
         # self.riderFrame = pd.DataFrame(self.riderFrame).T
 
@@ -128,6 +129,7 @@ class DataSaver():
         self.riderFrame[riderId]['processOrder'] = orderId
         self.riderFrame[riderId]['desX'] = self.fenpeiDic[orderId]['userMcx']
         self.riderFrame[riderId]['desY'] = self.fenpeiDic[orderId]['userMcy']
+        self.riderFrame[riderId]['nowAoi'] = self.fenpeiDic[orderId]['userAoi']
         self.riderFrame[riderId]['orderList'].remove(orderId)
         self.riderFrame[riderId]['hasOrderNum'] = self.riderFrame[riderId]['hasOrderNum']-1
         self.riderFrame[riderId]['finishTime'] = finishTime
@@ -159,20 +161,20 @@ class DataSaver():
         self.finishDic[finishOrderId] = copyDic
         self.finishDic[finishOrderId]['processStatus'] = 'finish'
 
-    def test_save(self):
-        with open(Config.oper_info_test, 'wb') as fileWriter:
-            fileWriter.write(
-                    '{}\n'.format(json.dumps(self.orderDic)).encode('utf8')
-                    )
-            fileWriter.write(
-                    '{}\n'.format(json.dumps(self.fenpeiDic)).encode('utf8')
-                    )
-            fileWriter.write(
-                    '{}\n'.format(json.dumps(self.processingDic)).encode('utf8')
-                    )
-            fileWriter.write(
-                    '{}\n'.format(json.dumps(self.finishDic)).encode('utf8')
-                    )
-            fileWriter.write(
-                    '{}\n'.format(json.dumps(self.riderFrame)).encode('utf8')
-                    )
+    # def test_save(self):
+    #     with open(Config.oper_info_test, 'wb') as fileWriter:
+    #         fileWriter.write(
+    #                 '{}\n'.format(json.dumps(self.orderDic)).encode('utf8')
+    #                 )
+    #         fileWriter.write(
+    #                 '{}\n'.format(json.dumps(self.fenpeiDic)).encode('utf8')
+    #                 )
+    #         fileWriter.write(
+    #                 '{}\n'.format(json.dumps(self.processingDic)).encode('utf8')
+    #                 )
+    #         fileWriter.write(
+    #                 '{}\n'.format(json.dumps(self.finishDic)).encode('utf8')
+    #                 )
+    #         fileWriter.write(
+    #                 '{}\n'.format(json.dumps(self.riderFrame)).encode('utf8')
+    #                 )

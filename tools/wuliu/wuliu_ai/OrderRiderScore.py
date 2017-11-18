@@ -14,7 +14,7 @@ import base_few
 
 def get_score_order_rider(
         orderDic, riderFrame, orderId,
-        riderId, similarSet, timeNow
+        riderId, similarSet, timeNow, aoiType
         ):
     '''
     计算订单和骑士之间的打分
@@ -38,6 +38,8 @@ def get_score_order_rider(
         userY = orderDic[orderId]['userMcy']
         expectTime = orderDic[orderId]['expectTime']
         waitTime = orderDic[orderId]['waitSecs']
+        nowAoi = riderFrame[riderId]['nowAoi']
+        riderAoi = riderFrame[riderId]['aoiId']
         # 公用筛选变量
         if riderStatus == 'leisure':
             riderUseX = riderX
@@ -51,9 +53,6 @@ def get_score_order_rider(
         outScore += Config.score_distance*distance_near(
                 shopX, shopY, riderStatus, riderUseX, riderUseY
                 )
-        # 骑士不够10单
-        if riderFinish < 10:
-            outScore += Config.score_not_ten*1
         # 骑士接了此单之后，是否可以准时完成此单, timeScore:-1~1
         exactScore, timeScore = exact_finish(
                 timeUse, riderSpeed, riderUseX,
@@ -62,6 +61,16 @@ def get_score_order_rider(
                 )
         outScore += Config.score_exact_finish*exactScore
         outScore += Config.score_time_score*timeScore
+        # 最后满足条件特定
+        if aoiType == 'same':
+            # 骑士不够10单
+            if riderFinish < 10:
+                outScore += Config.score_not_ten*1
+            # 骑士商圈和所在位置不符
+            con1 = nowAoi != riderAoi
+            con2 = nowAoi != -1
+            if con1 and con2:
+                outScore += Config.score_not_same_aoi*1
     else:
         # 开始进行group的打分
         orderList = self.groupDic[orderId]
