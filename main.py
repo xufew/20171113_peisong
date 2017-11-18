@@ -3,6 +3,7 @@
 # author: LONGFEI XU
 # Try your best
 # ============
+import sys
 import time
 
 import pandas as pd
@@ -51,8 +52,7 @@ if __name__ == '__main__':
         # 空闲骑士和订单之间进行打分矩阵的计算
         dispatcher.init_value()
         ifHas, orderRiderMatrix = dispatcher.rider_order_matrix(
-                dataSaver.orderDic, dataSaver.riderFrame,
-                similarSet, 'free', 'same'
+                dataSaver, similarSet, 'free', 'same'
                 )
         # 将订单分配给空闲骑士
         if ifHas:
@@ -63,8 +63,7 @@ if __name__ == '__main__':
         # 计算非空闲骑士
         dispatcher.init_value()
         ifHas, orderRiderMatrix = dispatcher.rider_order_matrix(
-                dataSaver.orderDic, dataSaver.riderFrame,
-                similarSet, 'processing', 'same'
+                dataSaver, similarSet, 'processing', 'same'
                 )
         if ifHas:
             for aoiId in orderRiderMatrix:

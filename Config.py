@@ -9,6 +9,8 @@ import os
 ABS_PATH=os.path.dirname(
         os.path.abspath(__file__)
         )
+# 包路径
+base_few_path='{}/{}'.format(ABS_PATH, 'tools')
 
 # 拉取订单间隔(秒)
 order_time_range = 60
@@ -26,3 +28,9 @@ combine_thres = 5
 oper_info_path = '{}/out/oper_info'.format(ABS_PATH)
 oper_info_total_path = '{}/out/oper_info_total'.format(ABS_PATH)
 oper_info_test = '{}/out/oper_info_test'.format(ABS_PATH)
+
+# 骑士打分权重
+score_distance = 1
+score_not_ten = 3
+score_exact_finish = 2
+score_time_score = 1

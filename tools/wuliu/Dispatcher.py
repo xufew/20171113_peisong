@@ -4,7 +4,6 @@
 # Try your best
 # ============
 import sys
-sys.path.append('../../')
 
 import numpy as np
 import pandas as pd
@@ -12,6 +11,7 @@ from munkres import DISALLOWED
 
 from .. import base_few
 import Config
+from .wuliu_ai import OrderRiderScore
 
 
 class Dispatcher():
@@ -50,12 +50,13 @@ class Dispatcher():
 
 
     def rider_order_matrix(
-            self, orderDic, riderFrame,
-            similarSet, riderType, aoiType
+            self, dataSaver, similarSet, riderType, aoiType
             ):
         '''
         订单和骑士之间，得分矩阵计算，空闲骑士
         '''
+        orderDic = dataSaver.orderDic
+        riderFrame = dataSaver.riderFrame
         if riderType == 'free':
             # 获取所有待分配订单号
             if len(orderDic) == 0:
@@ -103,9 +104,9 @@ class Dispatcher():
             for thisOrder in orderList:
                 outMatrixDic['1'][thisOrder] = {}
                 for thisRider in riderList:
-                    thisScore = self.__get_score_order_rider(
+                    thisScore = OrderRiderScore.get_score_order_rider(
                             orderDic, riderFrame, thisOrder,
-                            thisRider, similarSet
+                            thisRider, similarSet, dataSaver.time
                             )
                     outMatrixDic['1'][thisOrder][thisRider] = thisScore
         elif aoiType == 'same':
@@ -119,58 +120,13 @@ class Dispatcher():
                     riderAoi = riderFrame[thisRider]['aoiId']
                     if riderAoi != orderAoi:
                         continue
-                    thisScore = self.__get_score_order_rider(
+                    thisScore = OrderRiderScore.get_score_order_rider(
                             orderDic, riderFrame, thisOrder,
-                            thisRider, similarSet
+                            thisRider, similarSet, dataSaver.time
                             )
                     outMatrixDic[orderAoi][thisOrder][thisRider] = thisScore
         return True, outMatrixDic
 
-    def __get_score_order_rider(
-            self, orderDic, riderFrame, orderId,
-            riderId, similarSet
-            ):
-        '''
-        计算订单和骑士之间的打分
-        '''
-        outScore = 0
-        con1 = type(orderId) is type(1)
-        if con1:
-            # 开始进行非group的打分
-            shopX = orderDic[orderId]['shopMcx']
-            shopY = orderDic[orderId]['shopMcy']
-            # 骑士离订单近
-            if riderFrame[riderId]['status'] == 'leisure':
-                riderX = riderFrame[riderId]['mcx']
-                riderY = riderFrame[riderId]['mcy']
-            else:
-                riderX = riderFrame[riderId]['desX']
-                riderY = riderFrame[riderId]['desY']
-            shopRiderDis = base_few.Mercator.getDistance(
-                    (float(shopX), float(shopY)), (float(riderX), float(riderY))
-                    )
-            if shopRiderDis < 500:
-                outScore += 50
-            # 骑士不够10单
-            riderFinish = riderFrame[riderId]['finishComplete']
-            if riderFinish < 10:
-                outScore += 100
-        else:
-            # 开始进行group的打分
-            orderList = self.groupDic[orderId]
-            totalDis = 0
-            for thisOrder in orderList:
-                shopX = orderDic[thisOrder]['shopMcx']
-                shopY = orderDic[thisOrder]['shopMcy']
-                riderX = riderFrame.loc[riderId, 'mcx']
-                riderY = riderFrame.loc[riderId, 'mcy']
-                # 骑士距离商户距离比较近
-                shopRiderDis = base_few.Mercator().getDistance((shopX, shopY), (riderX, riderY))
-                totalDis += shopRiderDis
-            totalDis = totalDis/float(len(orderList))
-            if totalDis < 1000:
-                outScore += 50
-        return outScore
 
     def Km_dispatch(self, orderRiderMatrix, dataSaver, munkreser):
         '''
