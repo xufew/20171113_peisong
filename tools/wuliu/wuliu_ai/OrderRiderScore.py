@@ -21,7 +21,7 @@ def get_score_order_rider(
     '''
     outScore = 0
     con1 = type(orderId) is type(1)
-    con2 = type(orderId) is type(np.int)
+    con2 = type(orderId) is np.int64
     if con1 or con2:
         # 获取相关有用数据
         shopX = orderDic[orderId]['shopMcx']

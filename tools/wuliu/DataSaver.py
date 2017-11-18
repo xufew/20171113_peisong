@@ -7,6 +7,7 @@ import sys
 sys.path.append('../../')
 import json
 
+import numpy as np
 import pandas as pd
 
 from .. import base_few
@@ -96,7 +97,9 @@ class DataSaver():
         将一个订单分配到骑士的待操作列表
         '''
         typeOrder = type(orderId)
-        if typeOrder == type(1):
+        con1 = typeOrder is type(1)
+        con2 = typeOrder is np.int64
+        if con1 or con2:
             self.riderFrame[riderId]['orderList'].append(orderId)
             self.riderFrame[riderId]['hasOrderNum'] = len(
                     self.riderFrame[riderId]['orderList']
@@ -105,7 +108,7 @@ class DataSaver():
             self.orderDic[orderId]['processStatus'] = 'fenpei'
             self.fenpeiDic[orderId] = self.orderDic[orderId].copy()
             self.orderDic.pop(orderId)
-        elif typeOrder == type([]):
+        else:
             for thisOrder in orderId:
                 self.riderFrame[riderId]['orderList'].append(thisOrder)
                 self.riderFrame[riderId]['hasOrderNum'] = len(

@@ -145,7 +145,7 @@ class Dispatcher():
             for thisSet in indexes:
                 orderId = orderIdList[thisSet[0]]
                 riderId = riderIdList[thisSet[1]]
-                if type(orderId) != type(1):
+                if type(orderId) == type(''):
                     orderList = self.groupDic[orderId]
                     dataSaver.dispatch_order(orderList, riderId)
                 else:
@@ -156,7 +156,7 @@ class Dispatcher():
             for thisSet in indexes:
                 orderId = orderIdList[thisSet[1]]
                 riderId = riderIdList[thisSet[0]]
-                if type(orderId) != type(1):
+                if type(orderId) == type(''):
                     orderList = self.groupDic[orderId]
                     dataSaver.dispatch_order(orderList, riderId)
                 else:
