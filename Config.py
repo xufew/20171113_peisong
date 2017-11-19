@@ -14,7 +14,8 @@ base_few_path='{}/{}'.format(ABS_PATH, 'tools')
 
 # 拉取订单间隔(秒)
 order_time_range = 60
-change_time_thres = 1000                      # 保留多少单进入局部最优
+change_time_thres = 1000                        # 保留多少单进入局部最优
+yuding_time_thres = 1500                        # 预订单离预期时间剩多久进入派单流程
 
 # 相似度阈值distance
 similar_shop_distance_thres = 1000

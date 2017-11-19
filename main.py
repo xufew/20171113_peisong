@@ -32,14 +32,16 @@ if __name__ == '__main__':
     # 计算时间订单分布，看是否只发同商圈的单，还是全局发单
     producer.count_data_dis()
     while True:
-    # for i in range(1):
+    # for i in range(2):
         if producer.time >= producer.endtime:
             break
         # 取信息,每分钟的订单
         orderValue = producer.produce_order()
-        dataSaver.save_order_info(orderValue)
         dataSaver.time = producer.time
+        dataSaver.save_order_info(orderValue)
         print(len(dataSaver.orderDic))
+        # 检查是否有预约单可以进入派单流程
+        dataSaver.check_yuyue_order()
         # # 进行订单合并
         # similarSet = orderProcesser.combine_order_firstime(
         #         dataSaver.orderDic,
@@ -76,7 +78,7 @@ if __name__ == '__main__':
             # 空闲骑士和订单之间进行打分矩阵的计算
             dispatcher.init_value()
             ifHas, orderRiderMatrix = dispatcher.rider_order_matrix(
-                    dataSaver, similarSet, 'free', 'diff'
+                    dataSaver, similarSet, 'free', 'same'
                     )
             # 将订单分配给空闲骑士
             if ifHas:
@@ -87,7 +89,7 @@ if __name__ == '__main__':
             # 计算非空闲骑士
             dispatcher.init_value()
             ifHas, orderRiderMatrix = dispatcher.rider_order_matrix(
-                    dataSaver, similarSet, 'processing', 'diff'
+                    dataSaver, similarSet, 'processing', 'same'
                     )
             if ifHas:
                 for aoiId in orderRiderMatrix:

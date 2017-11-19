@@ -23,9 +23,11 @@ class DataSaver():
         self.riderFrame = {}
         self.orderDic = {}
         self.fenpeiDic = {}
+        self.yuyueDic = {}
         self.processingDic = {}
         self.finishDic = {}
         self.time = 0
+        self.timer = base_few.Timer()
 
     def save_rider_info(self, riderValue):
         '''
@@ -75,6 +77,29 @@ class DataSaver():
             waitSecs = thisSet['wait_secs']
             immediateDeliver = thisSet['immediate_deliver']
             expectTime = thisSet['expect_time']
+            if not immediateDeliver:
+                thisExpectTime = self.timer.trans_unix_to_datetime(expectTime)
+                thisNowTime = self.timer.trans_unix_to_datetime(self.time)
+                thisRange = (thisExpectTime-thisNowTime).seconds
+                if thisRange > Config.yuding_time_thres:
+                    self.yuyueDic[orderId] = {
+                            'orderId': orderId,
+                            'orderTime': orderTime,
+                            'shopAoi': shopAoi,
+                            'shopId': shopId,
+                            'shopMcx': shopMcx,
+                            'shopMcy': shopMcy,
+                            'userAoi': userAoi,
+                            'userId': userId,
+                            'userMcx': userMcx,
+                            'userMcy': userMcy,
+                            'waitSecs': waitSecs,
+                            'immediateDeliver': immediateDeliver,
+                            'expectTime': expectTime,
+                            'processRider': -1,
+                            'processStatus': 'none'
+                            }
+                    continue
             self.orderDic[orderId] = {
                     'orderId': orderId,
                     'orderTime': orderTime,
@@ -92,6 +117,24 @@ class DataSaver():
                     'processRider': -1,
                     'processStatus': 'none'
                     }
+
+
+    def check_yuyue_order(self):
+        '''
+        用来检查是否有预约单满足时间间隔条件，可以进行分单配送
+        '''
+        removeList = []
+        for orderId in self.yuyueDic:
+            expectTime = self.timer.trans_unix_to_datetime(self.yuyueDic[orderId]['expectTime'])
+            nowTime = self.timer.trans_unix_to_datetime(self.time)
+            thisRange = (expectTime-nowTime).seconds
+            if thisRange <= Config.yuding_time_thres:
+                orderValue = self.yuyueDic[orderId].copy()
+                self.orderDic[orderId] = orderValue
+                removeList.append(orderId)
+        for orderId in removeList:
+            self.yuyueDic.pop(orderId)
+
 
     def dispatch_order(self, orderId, riderId):
         '''
