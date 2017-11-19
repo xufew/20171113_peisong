@@ -11,25 +11,29 @@ ABS_PATH=os.path.dirname(
         )
 # 包路径
 base_few_path='{}/{}'.format(ABS_PATH, 'tools')
+# 输出骑士操作信息路径
+oper_info_path = '{}/out/oper_info'.format(ABS_PATH)
+oper_info_total_path = '{}/out/oper_info_total'.format(ABS_PATH)
+oper_info_test = '{}/out/oper_info_test'.format(ABS_PATH)
 
 # 拉取订单间隔(秒)
 order_time_range = 60
 change_time_thres = 1000                        # 保留多少单进入局部最优
 yuding_time_thres = 1500                        # 预订单离预期时间剩多久进入派单流程
 
-# 相似度阈值distance
-similar_shop_distance_thres = 1000
-similar_user_distance_thres = 1000
-similar_user_weight = 0.3
-similar_shop_weight = 0.7
+# 订单相似度
+similar_weight_same_shop_user = 3
+similar_shop_dis_thres = 500.0                  # 商户之间比较近的阈值
+similar_weight_shop = 1
+similar_user_dis_thres = 500.0                  # 用户之间比较近的阈值
+similar_weight_user = 1
+similar_income_thres = 1000.0                   # 空间距离收益阈值
+similar_weight_income = 1
+similar_weight_cannot_finish = -3               # 合并之后无法完成订单
 
 # 并单最大组合阈值
-combine_thres = 5
-
-# 输出骑士操作信息路径
-oper_info_path = '{}/out/oper_info'.format(ABS_PATH)
-oper_info_total_path = '{}/out/oper_info_total'.format(ABS_PATH)
-oper_info_test = '{}/out/oper_info_test'.format(ABS_PATH)
+combine_thres = 2
+combine_score_thres = 1
 
 # 骑士打分权重
 score_distance = 1
