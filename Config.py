@@ -18,7 +18,7 @@ oper_info_test = '{}/out/oper_info_test'.format(ABS_PATH)
 
 # 拉取订单间隔(秒)
 order_time_range = 60
-change_time_thres = 1000                        # 保留多少单进入局部最优
+change_time_thres = 1                           # 保留多少单进入局部最优,骑士总数倍数
 yuding_time_thres = 1500                        # 预订单离预期时间剩多久进入派单流程
 
 # 订单相似度
@@ -29,7 +29,7 @@ similar_user_dis_thres = 500.0                  # 用户之间比较近的阈值
 similar_weight_user = 1
 similar_income_thres = 1000.0                   # 空间距离收益阈值
 similar_weight_income = 1
-similar_weight_cannot_finish = -3               # 合并之后无法完成订单
+similar_weight_cannot_finish = 0               # 合并之后无法完成订单
 
 # 并单最大组合阈值
 combine_thres = 2
@@ -38,6 +38,6 @@ combine_score_thres = 1
 # 骑士打分权重
 score_distance = 1
 score_not_ten = 8
-score_exact_finish = 2
+score_exact_finish = 3
 score_time_score = 1
 score_not_same_aoi = 8

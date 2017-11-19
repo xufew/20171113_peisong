@@ -41,7 +41,7 @@ class OrderProcesser():
                 for compareId in thisGroup:
                     score = similarMatrix[compareId][orderId]
                     if score > Config.combine_score_thres:
-                        if len(thisGroup) <= Config.combine_thres:
+                        if len(thisGroup) < Config.combine_thres:
                             thisGroup.append(orderId)
                             jumpId = True
                             break

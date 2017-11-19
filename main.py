@@ -32,7 +32,7 @@ if __name__ == '__main__':
     # 计算时间订单分布，看是否只发同商圈的单，还是全局发单
     producer.count_data_dis()
     while True:
-    # for i in range(2):
+    # for i in range(1):
         if producer.time >= producer.endtime:
             break
         # 取信息,每分钟的订单
@@ -42,11 +42,10 @@ if __name__ == '__main__':
         print(len(dataSaver.orderDic))
         # 检查是否有预约单可以进入派单流程
         dataSaver.check_yuyue_order()
-        # # 进行订单合并
-        # similarSet = orderProcesser.combine_order_firstime(
-        #         dataSaver.orderDic,
-        #         dataSaver.riderFrame,
-        #         )
+        # 进行订单合并
+        similarSet = orderProcesser.combine_order(
+                dataSaver
+                )
         # # 进行订单分配给骑士中含有相似订单
         # similarSet = dispatcher.rider_similar_order(
         #         similarSet, dataSaver
@@ -55,8 +54,11 @@ if __name__ == '__main__':
         if producer.time > producer.changeTime:
             # 空闲骑士和订单之间进行打分矩阵的计算
             dispatcher.init_value()
+            dispatcher.typeDic['riderType'] = 'free'
+            dispatcher.typeDic['aoiType'] = 'same'
+            dispatcher.typeDic['minNumType'] = 'first'
             ifHas, orderRiderMatrix = dispatcher.rider_order_matrix(
-                    dataSaver, similarSet, 'free', 'same'
+                    dataSaver, similarSet
                     )
             # 将订单分配给空闲骑士
             if ifHas:
@@ -66,8 +68,11 @@ if __name__ == '__main__':
                             )
             # 计算非空闲骑士
             dispatcher.init_value()
+            dispatcher.typeDic['riderType'] = 'processing'
+            dispatcher.typeDic['aoiType'] = 'same'
+            dispatcher.typeDic['minNumType'] = 'first'
             ifHas, orderRiderMatrix = dispatcher.rider_order_matrix(
-                    dataSaver, similarSet, 'processing', 'same'
+                    dataSaver, similarSet
                     )
             if ifHas:
                 for aoiId in orderRiderMatrix:
@@ -77,8 +82,11 @@ if __name__ == '__main__':
         else:
             # 空闲骑士和订单之间进行打分矩阵的计算
             dispatcher.init_value()
+            dispatcher.typeDic['riderType'] = 'free'
+            dispatcher.typeDic['aoiType'] = 'same'
+            dispatcher.typeDic['minNumType'] = 'last'
             ifHas, orderRiderMatrix = dispatcher.rider_order_matrix(
-                    dataSaver, similarSet, 'free', 'same'
+                    dataSaver, similarSet
                     )
             # 将订单分配给空闲骑士
             if ifHas:
@@ -88,8 +96,11 @@ if __name__ == '__main__':
                             )
             # 计算非空闲骑士
             dispatcher.init_value()
+            dispatcher.typeDic['riderType'] = 'processing'
+            dispatcher.typeDic['aoiType'] = 'same'
+            dispatcher.typeDic['minNumType'] = 'last'
             ifHas, orderRiderMatrix = dispatcher.rider_order_matrix(
-                    dataSaver, similarSet, 'processing', 'same'
+                    dataSaver, similarSet
                     )
             if ifHas:
                 for aoiId in orderRiderMatrix:

@@ -20,6 +20,11 @@ class Dispatcher():
     '''
     def __init__(self):
         self.groupDic = {}
+        self.typeDic = {
+                'riderType': 'free',             # free, processing，派给骑士的类型
+                'aoiType': 'same',               # same,diff，商圈派单类型
+                'minNumType': 'last',            # last,first，不够10单的骑士是否优先
+                }
 
     def init_value(self):
         self.groupDic = {}
@@ -50,14 +55,14 @@ class Dispatcher():
 
 
     def rider_order_matrix(
-            self, dataSaver, similarSet, riderType, aoiType
+            self, dataSaver, similarSet
             ):
         '''
         订单和骑士之间，得分矩阵计算，空闲骑士
         '''
         orderDic = dataSaver.orderDic
         riderFrame = dataSaver.riderFrame
-        if riderType == 'free':
+        if self.typeDic['riderType'] == 'free':
             # 获取所有待分配订单号
             if len(orderDic) == 0:
                 return False, 0
@@ -71,7 +76,7 @@ class Dispatcher():
             riderList = list(freeRiderFrame.index)
             if len(riderList) == 0:
                 return False,0
-        if riderType == 'processing':
+        if self.typeDic['riderType'] == 'processing':
             # 获取所有待分配订单号
             if len(orderDic) == 0:
                 return False, 0
@@ -88,31 +93,39 @@ class Dispatcher():
             if len(riderList) == 0:
                 return False, 0
         # 替换并单为group
-        for thisSet in similarSet:
-            thisOrderId = thisSet[0]
-            self.groupDic['group_{}'.format(thisOrderId)] = thisSet
-            copyList = outMatrix.loc[thisOrderId, :]
-            outMatrix.drop(index=list(thisSet), inplace=True)
-            outMatrix.loc['group_{}'.format(thisOrderId)] = copyList
+        for thisList in similarSet:
+            thisOrderId = thisList[0]
+            self.groupDic['group_{}'.format(thisOrderId)] = thisList
             # 已有的订单id从总的里面删除
-            for skipOrderId in thisSet:
+            for skipOrderId in thisList:
                 orderList.remove(skipOrderId)
             orderList.append('group_{}'.format(thisOrderId))
         # 开始打分, 只接
-        if aoiType == 'diff':
+        if self.typeDic['aoiType'] == 'diff':
             outMatrixDic = {'1':{}}
             for thisOrder in orderList:
                 outMatrixDic['1'][thisOrder] = {}
                 for thisRider in riderList:
-                    thisScore = OrderRiderScore.get_score_order_rider(
-                            orderDic, riderFrame, thisOrder,
-                            thisRider, similarSet, dataSaver.time, aoiType
-                            )
+                    if type(thisOrder) == type(''):
+                        # 与骑士匹配的是订单组
+                        thisScore = OrderRiderScore.get_score_ordergroup_rider(
+                                orderDic, riderFrame, thisOrder,
+                                thisRider, similarSet, dataSaver.time, self.typeDic,
+                                self.groupDic
+                                )
+                    else:
+                        thisScore = OrderRiderScore.get_score_order_rider(
+                                orderDic, riderFrame, thisOrder,
+                                thisRider, similarSet, dataSaver.time, self.typeDic
+                                )
                     outMatrixDic['1'][thisOrder][thisRider] = thisScore
-        elif aoiType == 'same':
+        elif self.typeDic['aoiType'] == 'same':
             outMatrixDic = {}
             for thisOrder in orderList:
-                orderAoi = orderDic[thisOrder]['userAoi']
+                if type(thisOrder) == type(''):
+                    orderAoi = orderDic[self.groupDic[thisOrder][0]]['userAoi']
+                else:
+                    orderAoi = orderDic[thisOrder]['userAoi']
                 if orderAoi not in outMatrixDic:
                     outMatrixDic[orderAoi] = {}
                 outMatrixDic[orderAoi][thisOrder] = {}
@@ -120,10 +133,19 @@ class Dispatcher():
                     riderAoi = riderFrame[thisRider]['aoiId']
                     if riderAoi != orderAoi:
                         continue
-                    thisScore = OrderRiderScore.get_score_order_rider(
-                            orderDic, riderFrame, thisOrder,
-                            thisRider, similarSet, dataSaver.time, aoiType
-                            )
+                    if type(thisOrder) == type(''):
+                        # 与骑士匹配的是订单组
+                        thisScore = OrderRiderScore.get_score_ordergroup_rider(
+                                orderDic, riderFrame, thisOrder,
+                                thisRider, similarSet, dataSaver.time, self.typeDic,
+                                self.groupDic
+                                )
+                    else:
+                        # 单个订单
+                        thisScore = OrderRiderScore.get_score_order_rider(
+                                orderDic, riderFrame, thisOrder,
+                                thisRider, similarSet, dataSaver.time, self.typeDic
+                                )
                     outMatrixDic[orderAoi][thisOrder][thisRider] = thisScore
         return True, outMatrixDic
 

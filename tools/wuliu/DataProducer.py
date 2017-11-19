@@ -52,6 +52,11 @@ class DataProducer():
         '''
         计算数据的订单出现分布，为后续同商圈，不满足10单做准备
         '''
+        # 查询骑士总数
+        url = '{}/{}'.format(self.server, 'api/riders/count')
+        result = self.queryer.send_query(url)
+        riderNum = result['data']
+        #
         startTime = self.time
         endTime = self.endtime
         url = '{}/{}'.format(self.server, 'api/orders/count')
@@ -66,7 +71,7 @@ class DataProducer():
             value = self.queryer.send_query(url, data=data)['data']
             endTime = thisStart
             totalValue += value
-            if totalValue > Config.change_time_thres:
+            if totalValue > riderNum*Config.change_time_thres:
                 self.changeTime = endTime
                 break
 
