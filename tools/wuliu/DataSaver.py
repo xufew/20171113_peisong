@@ -60,7 +60,6 @@ class DataSaver():
                     'finishTime': -1,                   # 配送订单完成时间
                     'nowAoi': -1,                       # 现在所处商圈
                     }
-        # self.riderFrame = pd.DataFrame(self.riderFrame).T
 
     def save_order_info(self, orderSet):
         for thisSet in orderSet:
@@ -169,7 +168,7 @@ class DataSaver():
         '''
         # 变动骑士指标状态
         self.riderFrame[riderId]['status'] = 'processing'
-        self.riderFrame[riderId]['processOrder'] = orderId
+        self.riderFrame[riderId]['processOrder'] = [orderId]
         self.riderFrame[riderId]['desX'] = self.fenpeiDic[orderId]['userMcx']
         self.riderFrame[riderId]['desY'] = self.fenpeiDic[orderId]['userMcy']
         self.riderFrame[riderId]['nowAoi'] = self.fenpeiDic[orderId]['userAoi']
@@ -186,23 +185,24 @@ class DataSaver():
         '''
         刚完成一单的骑士，进行配置
         '''
-        finishOrderId = self.riderFrame[riderId]['processOrder']
-        self.riderFrame[riderId]['status'] = status
-        self.riderFrame[riderId]['finishComplete'] += 1
-        self.riderFrame[riderId]['mcx'] = self.riderFrame[riderId]['desX']
-        self.riderFrame[riderId]['mcy'] = self.riderFrame[riderId]['desY']
-        if status == 'leisure':
-            self.riderFrame[riderId]['processOrder'] = -1
-            self.riderFrame[riderId]['desX'] = -1
-            self.riderFrame[riderId]['desY'] = -1
-            self.riderFrame[riderId]['finishTime'] = -1
-        else:
-            pass
-        # 变动订单位置
-        copyDic = self.processingDic[finishOrderId].copy()
-        self.processingDic.pop(finishOrderId)
-        self.finishDic[finishOrderId] = copyDic
-        self.finishDic[finishOrderId]['processStatus'] = 'finish'
+        finishOrderList = self.riderFrame[riderId]['processOrder']
+        for finishOrderId in finishOrderList:
+            self.riderFrame[riderId]['status'] = status
+            self.riderFrame[riderId]['finishComplete'] += 1
+            self.riderFrame[riderId]['mcx'] = self.riderFrame[riderId]['desX']
+            self.riderFrame[riderId]['mcy'] = self.riderFrame[riderId]['desY']
+            if status == 'leisure':
+                self.riderFrame[riderId]['processOrder'] = -1
+                self.riderFrame[riderId]['desX'] = -1
+                self.riderFrame[riderId]['desY'] = -1
+                self.riderFrame[riderId]['finishTime'] = -1
+            else:
+                pass
+            # 变动订单位置
+            copyDic = self.processingDic[finishOrderId].copy()
+            self.processingDic.pop(finishOrderId)
+            self.finishDic[finishOrderId] = copyDic
+            self.finishDic[finishOrderId]['processStatus'] = 'finish'
 
     # def test_save(self):
     #     with open(Config.oper_info_test, 'wb') as fileWriter:
