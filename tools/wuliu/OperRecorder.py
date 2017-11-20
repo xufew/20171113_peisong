@@ -106,6 +106,8 @@ class OperRecorder():
         mealTime = orderDic['waitSecs']
         shopX = orderDic['shopMcx']
         shopY = orderDic['shopMcy']
+        immediateDeliver = orderDic['immediateDeliver']
+        expectTime = orderDic['expectTime']
         #
         orderTime = timer.trans_unix_to_datetime(orderTime)
         nowTime = timer.trans_unix_to_datetime(dataSaver.time)
@@ -127,6 +129,15 @@ class OperRecorder():
                 )
         goUserTime = timer.add_second_datetime(shopTime, goUser)
         finishTime = timer.trans_datetime_to_unix(goUserTime)
+        # 如果此单为预约单，判断是否在15分钟前完成，如果是，则拖后完成时间
+        if not immediateDeliver:
+            expectTime = timer.trans_unix_to_datetime(expectTime)
+            if expectTime>goUserTime:
+                delt = (expectTime-goUserTime).seconds
+                if delt >= 900:
+                    finishTime = timer.trans_datetime_to_unix(
+                            timer.add_second_datetime(expectTime, -900)
+                            )
         # 写此次信息
         self.__write_info(riderId, '', orderId, riderX, riderY, dataSaver.time, '0')
         self.__write_info(
