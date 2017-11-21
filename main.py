@@ -64,7 +64,10 @@ if __name__ == '__main__':
             if ifHas:
                 for aoiId in orderRiderMatrix:
                     dispatcher.Km_dispatch(
-                            pd.DataFrame(orderRiderMatrix[aoiId]).T, dataSaver, munkreser
+                            pd.DataFrame(orderRiderMatrix[aoiId]).T,
+                            dataSaver,
+                            munkreser,
+                            similarSet
                             )
             # 计算非空闲骑士
             dispatcher.init_value()
@@ -77,7 +80,10 @@ if __name__ == '__main__':
             if ifHas:
                 for aoiId in orderRiderMatrix:
                     dispatcher.Km_dispatch(
-                            pd.DataFrame(orderRiderMatrix[aoiId]).T, dataSaver, munkreser
+                            pd.DataFrame(orderRiderMatrix[aoiId]).T,
+                            dataSaver,
+                            munkreser,
+                            similarSet
                             )
         else:
             # 空闲骑士和订单之间进行打分矩阵的计算
@@ -92,7 +98,10 @@ if __name__ == '__main__':
             if ifHas:
                 for aoiId in orderRiderMatrix:
                     dispatcher.Km_dispatch(
-                            pd.DataFrame(orderRiderMatrix[aoiId]).T, dataSaver, munkreser
+                            pd.DataFrame(orderRiderMatrix[aoiId]).T,
+                            dataSaver,
+                            munkreser,
+                            similarSet
                             )
             # 计算非空闲骑士
             dispatcher.init_value()
@@ -105,7 +114,10 @@ if __name__ == '__main__':
             if ifHas:
                 for aoiId in orderRiderMatrix:
                     dispatcher.Km_dispatch(
-                            pd.DataFrame(orderRiderMatrix[aoiId]).T, dataSaver, munkreser
+                            pd.DataFrame(orderRiderMatrix[aoiId]).T,
+                            dataSaver,
+                            munkreser,
+                            similarSet
                             )
         # 开始处理骑士已分配单的取放
         operRecorder.init_value()

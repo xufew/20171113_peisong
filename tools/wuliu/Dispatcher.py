@@ -150,7 +150,7 @@ class Dispatcher():
         return True, outMatrixDic
 
 
-    def Km_dispatch(self, orderRiderMatrix, dataSaver, munkreser):
+    def Km_dispatch(self, orderRiderMatrix, dataSaver, munkreser, similarSet):
         '''
         进行km分配
         '''
@@ -169,6 +169,7 @@ class Dispatcher():
                 riderId = riderIdList[thisSet[1]]
                 if type(orderId) == type(''):
                     orderList = self.groupDic[orderId]
+                    similarSet.remove(orderList)
                     dataSaver.dispatch_order(orderList, riderId)
                 else:
                     dataSaver.dispatch_order(orderId, riderId)
@@ -180,6 +181,7 @@ class Dispatcher():
                 riderId = riderIdList[thisSet[0]]
                 if type(orderId) == type(''):
                     orderList = self.groupDic[orderId]
+                    similarSet.remove(orderList)
                     dataSaver.dispatch_order(orderList, riderId)
                 else:
                     dataSaver.dispatch_order(orderId, riderId)

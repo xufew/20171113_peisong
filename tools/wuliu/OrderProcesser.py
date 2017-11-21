@@ -40,12 +40,12 @@ class OrderProcesser():
                     break
                 for compareId in thisGroup:
                     score = similarMatrix[compareId][orderId]
-                    if score > Config.combine_score_thres:
+                    if score >= Config.combine_score_thres:
                         if len(thisGroup) < Config.combine_thres:
                             thisGroup.append(orderId)
                             jumpId = True
                             break
-            else:
+            if not jumpId:
                 similarList.append([orderId])
         # 选出有组合的list
         outList = []

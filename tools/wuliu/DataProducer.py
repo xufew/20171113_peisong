@@ -56,6 +56,7 @@ class DataProducer():
         url = '{}/{}'.format(self.server, 'api/riders/count')
         result = self.queryer.send_query(url)
         riderNum = result['data']
+        riderNum = 1000
         #
         startTime = self.time
         endTime = self.endtime

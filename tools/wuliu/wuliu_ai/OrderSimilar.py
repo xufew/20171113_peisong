@@ -24,6 +24,11 @@ def cal_order_similar(orderOne, orderTwo, dataSaver):
     user1Y = orderOne['userMcy']
     user2X = orderTwo['userMcx']
     user2Y = orderTwo['userMcy']
+    yuding1 = orderOne['expectTime']
+    yuding2 = orderTwo['expectTime']
+    # 不合并预订单
+    if (not yuding1) or (not yuding2):
+        score += 1*Config.similar_weight_yuding
     # 同店同用户
     con1 = shop1X == shop2X
     con2 = shop1Y == shop2Y
@@ -95,9 +100,11 @@ def if_chaoshi(
     nowTime = dataSaver.timer.trans_unix_to_datetime(dataSaver.time)
     orderTime1 = dataSaver.timer.trans_unix_to_datetime(orderOne['orderTime'])
     orderTime2 = dataSaver.timer.trans_unix_to_datetime(orderTwo['orderTime'])
+    expectTime1 = dataSaver.timer.trans_unix_to_datetime(orderOne['expectTime'])
+    expectTime2 = dataSaver.timer.trans_unix_to_datetime(orderTwo['expectTime'])
     waitTime1 = orderOne['waitSecs']
     waitTime2 = orderTwo['waitSecs']
-    goShopRange = 500/riderSpeed
+    goShopRange = 1000/riderSpeed
     # 走shop1，再走shop2，所需要取餐完成时间
     atShopTime = dataSaver.timer.add_second_datetime(nowTime, goShopRange)
     chucanTime = dataSaver.timer.add_second_datetime(orderTime1, waitTime1)
@@ -141,13 +148,13 @@ def if_chaoshi(
                 atUserTime, userDis/riderSpeed
                 )
         if minIndex == 0:
-            con1 = atUserTime < orderTime1
-            con2 = atUserTime2 < orderTime2
+            con1 = atUserTime < expectTime1
+            con2 = atUserTime2 < expectTime2
             if con1 and con2:
                 ifFinish = 1
         else:
-            con1 = atUserTime < orderTime2
-            con2 = atUserTime2 < orderTime1
+            con1 = atUserTime < expectTime2
+            con2 = atUserTime2 < expectTime1
             if con1 and con2:
                 ifFinish = 1
     else:
@@ -160,13 +167,13 @@ def if_chaoshi(
                 atUserTime, userDis/riderSpeed
                 )
         if minIndex == 0:
-            con1 = atUserTime < orderTime1
-            con2 = atUserTime2 < orderTime2
+            con1 = atUserTime < expectTime1
+            con2 = atUserTime2 < expectTime2
             if con1 and con2:
                 ifFinish = 1
         else:
-            con1 = atUserTime < orderTime2
-            con2 = atUserTime2 < orderTime1
+            con1 = atUserTime < expectTime2
+            con2 = atUserTime2 < expectTime1
             if con1 and con2:
                 ifFinish = 1
     return ifFinish

@@ -29,11 +29,12 @@ similar_user_dis_thres = 500.0                  # 用户之间比较近的阈值
 similar_weight_user = 1
 similar_income_thres = 1000.0                   # 空间距离收益阈值
 similar_weight_income = 1
-similar_weight_cannot_finish = 0               # 合并之后无法完成订单
+similar_weight_cannot_finish = -3               # 合并之后无法完成订单
+similar_weight_yuding = -100                    # 预订单不进行合并
 
 # 并单最大组合阈值
 combine_thres = 2
-combine_score_thres = 1
+combine_score_thres = 2.5
 
 # 骑士打分权重
 score_distance = 1
