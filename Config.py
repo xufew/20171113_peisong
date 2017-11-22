@@ -23,6 +23,9 @@ yuding_time_thres = 1500                        # 预订单离预期时间剩多
 yuding_wait = 300                               # 预订单不能在这之前完成
 putong_wait = 300                               # 大于多少秒算超时
 
+# 追加订单距离阈值
+add_weight_dis_thres = 500
+
 # 订单相似度
 similar_weight_same_shop_user = 3
 similar_shop_dis_thres = 500.0                  # 商户之间比较近的阈值
@@ -42,5 +45,5 @@ combine_score_thres = 2.5
 score_distance = 1
 score_not_ten = 8
 score_exact_finish = 3
-score_time_score = 2
+score_time_score = 2.5
 score_not_same_aoi = 8

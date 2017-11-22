@@ -4,6 +4,7 @@
 # Try your best
 # ============
 import sys
+import math
 
 import numpy as np
 import pandas as pd
@@ -12,6 +13,7 @@ from munkres import DISALLOWED
 from .. import base_few
 import Config
 from .wuliu_ai import OrderRiderScore
+from .wuliu_ai import OrderAdder
 
 
 class Dispatcher():
@@ -25,34 +27,10 @@ class Dispatcher():
                 'aoiType': 'same',               # same,diff，商圈派单类型
                 'minNumType': 'last',            # last,first，不够10单的骑士是否优先
                 }
+        self.timer = base_few.Timer()
 
     def init_value(self):
         self.groupDic = {}
-
-    def rider_similar_order(self, similarSet, dataSaver):
-        '''
-        未分配的订单和骑士身上挂靠的订单相似，分配给此骑士
-        '''
-        outList = []
-        for oneSet in similarSet:
-            # 判断是否存在已分配的订单
-            ifHasRider = False
-            for thisOrder in oneSet:
-                con1 = dataSaver.orderDic[thisOrder]['processStatus'] != 'none' # 已经分配了
-                if con1:
-                    riderId = dataSaver.orderDic[thisOrder]['processRider']
-                    ifHasRider = True
-                    break
-            # 将其他未分配订单给它
-            if ifHasRider:
-                for thisOrder in oneSet:
-                    con1 = dataSaver.orderDic[thisOrder]['processStatus'] == 'none' # 未分配
-                    if con1:
-                        dataSaver.dispatch_order(thisOrder, riderId)
-            else:
-                outList.append(oneSet)
-        return outList
-
 
     def rider_order_matrix(
             self, dataSaver, similarSet
@@ -185,3 +163,38 @@ class Dispatcher():
                     dataSaver.dispatch_order(orderList, riderId)
                 else:
                     dataSaver.dispatch_order(orderId, riderId)
+
+    def dispatch_add(self, dataSaver, operRecorder):
+        '''
+        对正在配送的订单进行追加
+        '''
+        riderDic = dataSaver.riderFrame
+        orderDic = dataSaver.orderDic
+        nowTime = dataSaver.time
+        orderList = list(dataSaver.orderDic.keys())
+        for orderId in orderList:
+            userNewX =  orderDic[orderId]['userMcx']
+            userNewY =  orderDic[orderId]['userMcy']
+            waitTime = orderDic[orderId]['waitSecs']
+            orderAoi = orderDic[orderId]['userAoi']
+            immediateDeliver = orderDic[orderId]['immediateDeliver']
+            if not immediateDeliver:
+                # 不进行预约单的插单
+                continue
+            for riderId in riderDic:
+                ifAdd, valueDic = OrderAdder.if_add_order(
+                        orderId, riderId, riderDic, orderDic, userNewX,
+                        userNewY, waitTime, orderAoi, self.timer, nowTime
+                        )
+                if ifAdd:
+                    dataSaver.rider_add_order(
+                            operRecorder,
+                            orderId,
+                            riderId,
+                            valueDic[0],
+                            valueDic[1],
+                            valueDic[2],
+                            valueDic[3],
+                            orderAoi,
+                            )
+                    break

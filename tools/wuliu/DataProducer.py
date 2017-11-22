@@ -35,7 +35,7 @@ class DataProducer():
         self.time = result['data']['from']
         self.endtime = self.timer.trans_datetime_to_unix(
                 self.timer.add_second_datetime(
-                    self.timer.trans_unix_to_datetime(result['data']['to']), 7200
+                    self.timer.trans_unix_to_datetime(result['data']['to']), 120
                     )
                 )
 

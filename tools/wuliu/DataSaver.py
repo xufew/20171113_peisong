@@ -209,20 +209,29 @@ class DataSaver():
         else:
             pass
 
-    # def test_save(self):
-    #     with open(Config.oper_info_test, 'wb') as fileWriter:
-    #         fileWriter.write(
-    #                 '{}\n'.format(json.dumps(self.orderDic)).encode('utf8')
-    #                 )
-    #         fileWriter.write(
-    #                 '{}\n'.format(json.dumps(self.fenpeiDic)).encode('utf8')
-    #                 )
-    #         fileWriter.write(
-    #                 '{}\n'.format(json.dumps(self.processingDic)).encode('utf8')
-    #                 )
-    #         fileWriter.write(
-    #                 '{}\n'.format(json.dumps(self.finishDic)).encode('utf8')
-    #                 )
-    #         fileWriter.write(
-    #                 '{}\n'.format(json.dumps(self.riderFrame)).encode('utf8')
-    #                 )
+    def rider_add_order(
+            self, operRecorder, orderId, riderId, userNewX,
+            userNewY, atShopTime, newDesTime, orderAoi
+            ):
+        '''
+        增加骑士之后，骑士状态改变
+        '''
+        shopX = self.orderDic[orderId]['shopMcx']
+        shopY = self.orderDic[orderId]['shopMcy']
+        # 写入上传信息
+        operRecorder.write_info(riderId, '', orderId, shopX, shopY, atShopTime, '0')
+        operRecorder.write_info(riderId, '', orderId, shopX, shopY, atShopTime, '1')
+        operRecorder.write_info(riderId, '', orderId, userNewX, userNewY, newDesTime, '3')
+        # 给骑士赋值
+        self.riderFrame[riderId]['finishTime'] = newDesTime
+        self.riderFrame[riderId]['routeDic']['userRoute'][
+                '{}_{}'.format(userNewX, userNewY)
+                ] = newDesTime
+        self.riderFrame[riderId]['desX'] = userNewX
+        self.riderFrame[riderId]['desY'] = userNewY
+        self.riderFrame[riderId]['nowAoi'] = orderAoi
+        self.riderFrame[riderId]['processOrder'].append(orderId)
+        # 改变订单属性
+        useDic = self.orderDic[orderId].copy()
+        self.orderDic.pop(orderId)
+        self.processingDic[orderId] = useDic

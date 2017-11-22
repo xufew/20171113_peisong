@@ -73,7 +73,7 @@ class OperRecorder():
                                 )
 
 
-    def __write_info(self, rider_id, rider_2_id, order_id, mcx, mcy, t, action):
+    def write_info(self, rider_id, rider_2_id, order_id, mcx, mcy, t, action):
         self.fileWriter.write(
                 '{}\t{}\t{}\t{}\t{}\t{}\t{}\n'.format(
                     rider_id,
@@ -150,14 +150,14 @@ class OperRecorder():
                                 timer.add_second_datetime(expectTime, -Config.yuding_wait)
                                 )
             # 写此次信息
-            self.__write_info(riderId, '', orderId, riderX, riderY, dataSaver.time, '0')
-            self.__write_info(
+            self.write_info(riderId, '', orderId, riderX, riderY, dataSaver.time, '0')
+            self.write_info(
                     riderId, '', orderId, shopX, shopY, timer.trans_datetime_to_unix(shopTime), '1'
                     )
             dataSaver.riderFrame[riderId]['routeDic']['shopRoute'][
                     '{}_{}'.format(shopX, shopY)
                     ] = timer.trans_datetime_to_unix(shopTime)
-            self.__write_info(riderId, '', orderId, userX, userY, finishTime, '3')
+            self.write_info(riderId, '', orderId, userX, userY, finishTime, '3')
             dataSaver.riderFrame[riderId]['routeDic']['userRoute'][
                     '{}_{}'.format(userX, userY)
                     ] = finishTime
@@ -175,7 +175,7 @@ class OperRecorder():
             nowTime = dataSaver.time
             # 走商户取餐
             for orderId in riderShop:
-                self.__write_info(riderId, '', orderId, riderX, riderY, nowTime, '0')
+                self.write_info(riderId, '', orderId, riderX, riderY, nowTime, '0')
                 orderDic = dataSaver.fenpeiDic[orderId]
                 shopX = orderDic['shopMcx']
                 shopY = orderDic['shopMcy']
@@ -197,7 +197,7 @@ class OperRecorder():
                     nowTime = timer.trans_datetime_to_unix(waitTime)
                 riderX = shopX
                 riderY = shopY
-                self.__write_info(riderId, '', orderId, riderX, riderY, nowTime, '1')
+                self.write_info(riderId, '', orderId, riderX, riderY, nowTime, '1')
                 dataSaver.riderFrame[riderId]['routeDic']['shopRoute'][
                         '{}_{}'.format(riderX, riderY)
                         ] = nowTime
@@ -217,7 +217,7 @@ class OperRecorder():
                         )
                 riderX = userX
                 riderY = userY
-                self.__write_info(riderId, '', orderId, riderX, riderY, nowTime, '3')
+                self.write_info(riderId, '', orderId, riderX, riderY, nowTime, '3')
                 dataSaver.riderFrame[riderId]['routeDic']['userRoute'][
                         '{}_{}'.format(riderX, riderY)
                         ] = nowTime
