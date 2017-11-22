@@ -10,6 +10,7 @@ import pandas as pd
 
 from tools import wuliu
 from munkres import Munkres
+import Config
 
 
 def time_now():
@@ -21,6 +22,29 @@ def get_free_rider_num(dataSaver):
     freeRiderFrame = useFrame.loc[useFrame.loc[:, 'status'] == 'leisure', :]
     riderList = list(freeRiderFrame.index)
     return len(riderList)
+
+
+def set_produce_order_num(orderSer, producer):
+    setNum = 60
+    nowTime = producer.time
+    nextTime = producer.timer.trans_datetime_to_unix(
+            producer.timer.add_second_datetime(
+                producer.timer.trans_unix_to_datetime(nowTime),
+                Config.order_time_count
+                )
+            )
+    con1 = orderSer.index>nowTime
+    con2 = orderSer.index<=nextTime
+    orderValue = orderSer[con1&con2].values[0]
+    if orderValue == 0:
+        setNum = Config.order_time_count
+    elif orderValue <= 3:
+        setNum = 1
+    elif orderValue <= 15:
+        setNum = 60
+    else:
+        setNum = 60
+    return setNum
 
 
 if __name__ == '__main__':
@@ -36,16 +60,19 @@ if __name__ == '__main__':
     dataSaver.save_rider_info(riderValue)
     # 获取首次出单时间, 并将时间计时器设置为此时间
     producer.count_first_time()
-    # 计算时间订单分布，看是否只发同商圈的单，还是全局发单
+    # 计算时间订单分布，确定满足10单和商圈时间
     producer.count_data_dis()
+    # 计算订单分布，用以定义压单量
+    orderSer = producer.count_order_dis()
     while True:
     # for i in range(2):
+        if producer.time >= producer.endtime:
+            break
         # 初始化变量
         operRecorder.init_value()
         #
-        if producer.time >= producer.endtime:
-            break
-        orderValue = producer.produce_order(60)
+        setNum = set_produce_order_num(orderSer, producer)
+        orderValue = producer.produce_order(setNum)
         # 取信息,每分钟的订单
         dataSaver.time = producer.time
         dataSaver.save_order_info(orderValue)

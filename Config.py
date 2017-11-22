@@ -18,6 +18,7 @@ oper_info_test = '{}/out/oper_info_test'.format(ABS_PATH)
 
 # 拉取订单间隔(秒)
 order_time_range = 60
+order_time_count = 60                           # 计算dis分布的时间间隔
 change_time_thres = 1                           # 保留多少单进入局部最优,骑士总数倍数
 yuding_time_thres = 1500                        # 预订单离预期时间剩多久进入派单流程
 yuding_wait = 300                               # 预订单不能在这之前完成

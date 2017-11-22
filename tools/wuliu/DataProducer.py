@@ -76,6 +76,30 @@ class DataProducer():
                 self.changeTime = endTime
                 break
 
+    def count_order_dis(self):
+        '''
+        计算每个时间段订单量
+        '''
+        orderSer = pd.Series([])
+        url = '{}/{}'.format(self.server, 'api/orders/count')
+        startTime = self.time
+        endTime = self.endtime
+        countTime = 0
+        while True:
+            if countTime>endTime:
+                break
+            countTime = self.timer.trans_datetime_to_unix(
+                    self.timer.add_second_datetime(
+                        self.timer.trans_unix_to_datetime(startTime),
+                        Config.order_time_count
+                        )
+                    )
+            data = {'from': startTime, 'to': countTime}
+            value = self.queryer.send_query(url, data=data)['data']
+            orderSer[countTime] = value
+            startTime = countTime
+        return orderSer
+
     def produce_order(self, rangeTime=Config.order_time_range):
         '''
         生成一分钟的订单数据
