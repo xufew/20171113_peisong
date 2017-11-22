@@ -43,7 +43,7 @@ if __name__ == '__main__':
         if producer.time >= producer.endtime:
             break
         similarSet = []
-        if get_free_rider_num(dataSaver) < 50:
+        if get_free_rider_num(dataSaver) < 10000:
             orderValue = producer.produce_order(60)
             # 进行订单合并
             similarSet = orderProcesser.combine_order(

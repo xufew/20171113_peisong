@@ -20,6 +20,8 @@ oper_info_test = '{}/out/oper_info_test'.format(ABS_PATH)
 order_time_range = 60
 change_time_thres = 1                           # 保留多少单进入局部最优,骑士总数倍数
 yuding_time_thres = 1500                        # 预订单离预期时间剩多久进入派单流程
+yuding_wait = 300                               # 预订单不能在这之前完成
+putong_wait = 300                               # 大于多少秒算超时
 
 # 订单相似度
 similar_weight_same_shop_user = 3
@@ -40,5 +42,5 @@ combine_score_thres = 2.5
 score_distance = 1
 score_not_ten = 8
 score_exact_finish = 3
-score_time_score = 1
+score_time_score = 2
 score_not_same_aoi = 8

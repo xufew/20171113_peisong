@@ -140,21 +140,27 @@ class OperRecorder():
                     )
             goUserTime = timer.add_second_datetime(shopTime, goUser)
             finishTime = timer.trans_datetime_to_unix(goUserTime)
-            # 如果此单为预约单，判断是否在15分钟前完成，如果是，则拖后完成时间
+            # 如果此单为预约单，判断是否在5分钟前完成，如果是，则拖后完成时间
             if not immediateDeliver:
                 expectTime = timer.trans_unix_to_datetime(expectTime)
                 if expectTime>goUserTime:
                     delt = (expectTime-goUserTime).seconds
-                    if delt >= 900:
+                    if delt >= Config.yuding_wait:
                         finishTime = timer.trans_datetime_to_unix(
-                                timer.add_second_datetime(expectTime, -900)
+                                timer.add_second_datetime(expectTime, -Config.yuding_wait)
                                 )
             # 写此次信息
             self.__write_info(riderId, '', orderId, riderX, riderY, dataSaver.time, '0')
             self.__write_info(
                     riderId, '', orderId, shopX, shopY, timer.trans_datetime_to_unix(shopTime), '1'
                     )
+            dataSaver.riderFrame[riderId]['routeDic']['shopRoute'][
+                    '{}_{}'.format(shopX, shopY)
+                    ] = timer.trans_datetime_to_unix(shopTime)
             self.__write_info(riderId, '', orderId, userX, userY, finishTime, '3')
+            dataSaver.riderFrame[riderId]['routeDic']['userRoute'][
+                    '{}_{}'.format(userX, userY)
+                    ] = finishTime
             # 确定结束信息
             desX = userX
             desY = userY
@@ -192,6 +198,9 @@ class OperRecorder():
                 riderX = shopX
                 riderY = shopY
                 self.__write_info(riderId, '', orderId, riderX, riderY, nowTime, '1')
+                dataSaver.riderFrame[riderId]['routeDic']['shopRoute'][
+                        '{}_{}'.format(riderX, riderY)
+                        ] = nowTime
             # 开始从商户送给用户
             for orderId in shopUser:
                 orderDic = dataSaver.fenpeiDic[orderId]
@@ -209,6 +218,9 @@ class OperRecorder():
                 riderX = userX
                 riderY = userY
                 self.__write_info(riderId, '', orderId, riderX, riderY, nowTime, '3')
+                dataSaver.riderFrame[riderId]['routeDic']['userRoute'][
+                        '{}_{}'.format(riderX, riderY)
+                        ] = nowTime
             # 最终赋值
             finishTime = nowTime
             desX = riderX

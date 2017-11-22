@@ -49,16 +49,17 @@ class DataSaver():
                     'maxLoad': maxLoad,
                     'minComplete': minComplete,
                     'speed': speed,
-                    'hasLoad': 0,                       # 已取餐订单量
-                    'status': 'leisure',                # 骑士状态
-                    'finishComplete': 0,                # 已完成订单量
-                    'desX': -1,                         # 目标地点的x坐标
-                    'desY': -1,                         # 目标地点的y坐标
-                    'orderList': [],                    # 骑士身上挂靠的订单list
+                    'hasLoad': 0,                                       # 已取餐订单量
+                    'status': 'leisure',                                # 骑士状态
+                    'finishComplete': 0,                                # 已完成订单量
+                    'desX': -1,                                         # 目标地点的x坐标
+                    'desY': -1,                                         # 目标地点的y坐标
+                    'orderList': [],                                    # 骑士身上挂靠的订单list
                     'hasOrderNum': 0,
-                    'processOrder': -1,                 # 正在处理的订单
-                    'finishTime': -1,                   # 配送订单完成时间
-                    'nowAoi': -1,                       # 现在所处商圈
+                    'processOrder': -1,                                 # 正在处理的订单
+                    'finishTime': -1,                                   # 配送订单完成时间
+                    'nowAoi': -1,                                       # 现在所处商圈
+                    'routeDic': {'shopRoute':{}, 'userRoute':{}},       # 记录正在配送订单组的所有到达路径
                     }
 
     def save_order_info(self, orderSet):
@@ -192,6 +193,7 @@ class DataSaver():
         self.riderFrame[riderId]['mcx'] = self.riderFrame[riderId]['desX']
         self.riderFrame[riderId]['mcy'] = self.riderFrame[riderId]['desY']
         finishOrderList = self.riderFrame[riderId]['processOrder']
+        self.riderFrame[riderId]['routeDic'] = {'shopRoute':{}, 'userRoute':{}}
         for finishOrderId in finishOrderList:
             self.riderFrame[riderId]['finishComplete'] += 1
             # 变动订单位置

@@ -135,7 +135,7 @@ def exact_finish(
         finishTime = timer.add_second_datetime(atShopTime, shopToUser)
     else:
         finishTime = timer.add_second_datetime(waitShopTime, shopToUser)
-    if expectTime > finishTime:
+    if timer.add_second_datetime(expectTime, Config.putong_wait) > finishTime:
         exactScore = 1
     # 完成所需时间
     if atShopTime >= waitShopTime:

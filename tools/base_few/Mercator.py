@@ -51,7 +51,7 @@ def convertMC2LL(_point):
     _ll = [_lng, _lat]
     return _ll
 
-def getDistance(_pointAMM, _pointBMM, _pointALL = []):
+def getDistance_mer(_pointAMM, _pointBMM, _pointALL = []):
     '''
     计算两点之间距离
     pointAMM  基准点墨卡托坐标
@@ -101,6 +101,12 @@ def getLoop(_v, _a, _b):
          _v += _b - _a
     return _v
 
+def getDistance(pointList1, pointList2):
+    dis = math.sqrt(
+            math.pow(pointList1[0]-pointList2[0], 2) +
+            math.pow(pointList1[1]-pointList2[1], 2)
+            )
+    return dis
 
 if __name__ == '__main__':
 	print(getDistance([12960343.27, 4848184.29], [12962873.7, 4849687.9]))
