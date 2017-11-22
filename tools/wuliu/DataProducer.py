@@ -76,11 +76,10 @@ class DataProducer():
                 self.changeTime = endTime
                 break
 
-    def produce_order(self):
+    def produce_order(self, rangeTime=Config.order_time_range):
         '''
         生成一分钟的订单数据
         '''
-        rangeTime = Config.order_time_range
         # 计算所派订单时间段
         startUnix = self.time
         startTime = self.timer.trans_unix_to_datetime(self.time)

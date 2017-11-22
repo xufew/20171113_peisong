@@ -24,8 +24,8 @@ def cal_order_similar(orderOne, orderTwo, dataSaver):
     user1Y = orderOne['userMcy']
     user2X = orderTwo['userMcx']
     user2Y = orderTwo['userMcy']
-    yuding1 = orderOne['expectTime']
-    yuding2 = orderTwo['expectTime']
+    yuding1 = orderOne['immediateDeliver']
+    yuding2 = orderTwo['immediateDeliver']
     # 不合并预订单
     if (not yuding1) or (not yuding2):
         score += 1*Config.similar_weight_yuding

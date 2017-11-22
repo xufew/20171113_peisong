@@ -33,7 +33,7 @@ similar_weight_cannot_finish = -3               # 合并之后无法完成订单
 similar_weight_yuding = -100                    # 预订单不进行合并
 
 # 并单最大组合阈值
-combine_thres = 2
+combine_thres = 4
 combine_score_thres = 2.5
 
 # 骑士打分权重

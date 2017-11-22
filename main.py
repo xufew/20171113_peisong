@@ -16,6 +16,13 @@ def time_now():
     print(time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())))
 
 
+def get_free_rider_num(dataSaver):
+    useFrame = pd.DataFrame(dataSaver.riderFrame).T
+    freeRiderFrame = useFrame.loc[useFrame.loc[:, 'status'] == 'leisure', :]
+    riderList = list(freeRiderFrame.index)
+    return len(riderList)
+
+
 if __name__ == '__main__':
     # 订单初始化
     producer = wuliu.DataProducer()                 # 初始化数据生成器
@@ -35,22 +42,25 @@ if __name__ == '__main__':
     # for i in range(1):
         if producer.time >= producer.endtime:
             break
+        similarSet = []
+        if get_free_rider_num(dataSaver) < 50:
+            orderValue = producer.produce_order(60)
+            # 进行订单合并
+            similarSet = orderProcesser.combine_order(
+                    dataSaver
+                    )
+        else:
+            orderValue = producer.produce_order()
         # 取信息,每分钟的订单
-        orderValue = producer.produce_order()
         dataSaver.time = producer.time
         dataSaver.save_order_info(orderValue)
         print(len(dataSaver.orderDic))
         # 检查是否有预约单可以进入派单流程
         dataSaver.check_yuyue_order()
-        # 进行订单合并
-        similarSet = orderProcesser.combine_order(
-                dataSaver
-                )
         # # 进行订单分配给骑士中含有相似订单
         # similarSet = dispatcher.rider_similar_order(
         #         similarSet, dataSaver
         #         )
-        similarSet = []
         if producer.time > producer.changeTime:
             # 空闲骑士和订单之间进行打分矩阵的计算
             dispatcher.init_value()
