@@ -40,7 +40,7 @@ def set_produce_order_num(orderSer, producer):
         setNum = Config.order_time_count
     elif orderValue <= 3:
         setNum = 1
-    elif orderValue <= 15:
+    elif orderValue <= 7:
         setNum = 60
     else:
         setNum = 60
@@ -65,13 +65,14 @@ if __name__ == '__main__':
     # 计算订单分布，用以定义压单量
     orderSer = producer.count_order_dis()
     while True:
-    # for i in range(2):
+    # for i in range(1):
         if producer.time >= producer.endtime:
             break
         # 初始化变量
         operRecorder.init_value()
-        #
+        # 计算商圈压力，并设置对应的压单量
         setNum = set_produce_order_num(orderSer, producer)
+        # setNum = 3000
         orderValue = producer.produce_order(setNum)
         # 取信息,每分钟的订单
         dataSaver.time = producer.time
@@ -104,7 +105,7 @@ if __name__ == '__main__':
                 if ifHas:
                     for aoiId in orderRiderMatrix:
                         dispatcher.Km_dispatch(
-                                pd.DataFrame(orderRiderMatrix[aoiId]).T,
+                                orderRiderMatrix[aoiId],
                                 dataSaver,
                                 munkreser,
                                 similarSet
@@ -120,7 +121,7 @@ if __name__ == '__main__':
                 if ifHas:
                     for aoiId in orderRiderMatrix:
                         dispatcher.Km_dispatch(
-                                pd.DataFrame(orderRiderMatrix[aoiId]).T,
+                                orderRiderMatrix[aoiId],
                                 dataSaver,
                                 munkreser,
                                 similarSet
@@ -138,7 +139,7 @@ if __name__ == '__main__':
                 if ifHas:
                     for aoiId in orderRiderMatrix:
                         dispatcher.Km_dispatch(
-                                pd.DataFrame(orderRiderMatrix[aoiId]).T,
+                                orderRiderMatrix[aoiId],
                                 dataSaver,
                                 munkreser,
                                 similarSet
@@ -154,7 +155,7 @@ if __name__ == '__main__':
                 if ifHas:
                     for aoiId in orderRiderMatrix:
                         dispatcher.Km_dispatch(
-                                pd.DataFrame(orderRiderMatrix[aoiId]).T,
+                                orderRiderMatrix[aoiId],
                                 dataSaver,
                                 munkreser,
                                 similarSet

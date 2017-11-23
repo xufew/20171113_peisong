@@ -206,6 +206,7 @@ class DataSaver():
             self.riderFrame[riderId]['desX'] = -1
             self.riderFrame[riderId]['desY'] = -1
             self.riderFrame[riderId]['finishTime'] = -1
+            self.riderFrame[riderId]['hasOrderNum'] = 0
         else:
             pass
 

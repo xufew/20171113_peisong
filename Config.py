@@ -19,7 +19,7 @@ oper_info_test = '{}/out/oper_info_test'.format(ABS_PATH)
 # 拉取订单间隔(秒)
 order_time_range = 60
 order_time_count = 60                           # 计算dis分布的时间间隔
-change_time_thres = 1                           # 保留多少单进入局部最优,骑士总数倍数
+change_rider_Num = 500                          # 剩多少订单，可以进入满足10单的要求
 yuding_time_thres = 1500                        # 预订单离预期时间剩多久进入派单流程
 yuding_wait = 300                               # 预订单不能在这之前完成
 putong_wait = 300                               # 大于多少秒算超时
@@ -45,6 +45,8 @@ combine_score_thres = 2.5
 # 骑士打分权重
 score_distance = 1
 score_not_ten = 8
+score_not_ten_small = 3
 score_exact_finish = 3
 score_time_score = 2.5
 score_not_same_aoi = 8
+score_order_time = 0

@@ -40,6 +40,7 @@ def get_score_order_rider(
     '''
     计算订单和骑士之间的打分
     '''
+    timer = base_few.Timer()
     outScore = 0
     # 获取相关有用数据
     shopX = orderDic[orderId]['shopMcx']
@@ -75,7 +76,8 @@ def get_score_order_rider(
     exactScore, timeScore = exact_finish(
             timeUse, riderSpeed, riderUseX,
             riderUseY, userX, userY, shopX,
-            shopY, expectTime, waitTime
+            shopY, expectTime, waitTime, timer,
+            timeNow
             )
     outScore += Config.score_exact_finish*exactScore
     outScore += Config.score_time_score*timeScore
@@ -84,6 +86,18 @@ def get_score_order_rider(
         # 骑士不够10单
         if riderFinish < 10:
             outScore += Config.score_not_ten*1
+    else:
+        if riderFinish < 10:
+            outScore += Config.score_not_ten_small*1
+    # 订单期望时间与当前时间差(-1,1)
+    if expectTime > timeNow:
+        deltaTime = 1-(
+                timer.trans_unix_to_datetime(expectTime)-
+                timer.trans_unix_to_datetime(timeNow)
+                ).seconds/float(60)/40
+        if deltaTime < 0:
+            deltaTime = 0
+        outScore += Config.score_order_time*deltaTime
     # if typeDic['aoiType'] == 'same':
     #     # 骑士商圈和所在位置不符
     #     con1 = nowAoi != riderAoi
@@ -111,14 +125,14 @@ def distance_near(
 def exact_finish(
         timeUse, riderSpeed, riderUseX,
         riderUseY, userX, userY, shopX,
-        shopY, expectTime, waitTime
+        shopY, expectTime, waitTime, timer,
+        timeNow
         ):
     '''
     骑士可以准时送达和骑士完成所需时间
     '''
     exactScore = 0
     timeScore = 0
-    timer = base_few.Timer()
     timeUse = timer.trans_unix_to_datetime(timeUse)
     expectTime = timer.trans_unix_to_datetime(expectTime)
     #
@@ -138,11 +152,8 @@ def exact_finish(
     if timer.add_second_datetime(expectTime, Config.putong_wait) > finishTime:
         exactScore = 1
     # 完成所需时间
-    if atShopTime >= waitShopTime:
-        totalTime = (riderToShop+shopToUser)/60.0
-    else:
-        totalTime = (waitTime+shopToUser)/60.0
-    timeScore = 1-totalTime/30.0
+    totalTime = (finishTime-timer.trans_unix_to_datetime(timeNow)).seconds
+    timeScore = 1-totalTime/60.0/30.0
     if timeScore < -1:
         timeScore = -1
     return exactScore, timeScore

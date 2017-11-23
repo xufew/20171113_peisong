@@ -125,6 +125,16 @@ class Dispatcher():
                                 thisRider, similarSet, dataSaver.time, self.typeDic
                                 )
                     outMatrixDic[orderAoi][thisOrder][thisRider] = thisScore
+        for aoiId in outMatrixDic:
+            outMatrixDic[aoiId] = pd.DataFrame(outMatrixDic[aoiId]).T
+        # # 剔除一些不符合情况的空闲骑士
+        # if self.typeDic['riderType'] == 'free':
+        #     for matrixIndex in outMatrixDic:
+        #         thisMatrix = outMatrixDic[matrixIndex].copy()
+        #         if(thisMatrix.shape[1] < 100):
+        #             canSendMatrix = (thisMatrix>3).any(axis=0)
+        #             thisMatrix = thisMatrix.loc[:, canSendMatrix]
+        #             outMatrixDic[matrixIndex] = thisMatrix
         return True, outMatrixDic
 
 

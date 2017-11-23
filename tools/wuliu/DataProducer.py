@@ -56,7 +56,7 @@ class DataProducer():
         url = '{}/{}'.format(self.server, 'api/riders/count')
         result = self.queryer.send_query(url)
         riderNum = result['data']
-        riderNum = 1000
+        riderNum = Config.change_rider_Num
         #
         startTime = self.time
         endTime = self.endtime
@@ -72,7 +72,7 @@ class DataProducer():
             value = self.queryer.send_query(url, data=data)['data']
             endTime = thisStart
             totalValue += value
-            if totalValue > riderNum*Config.change_time_thres:
+            if totalValue > riderNum:
                 self.changeTime = endTime
                 break
 
