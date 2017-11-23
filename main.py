@@ -86,7 +86,7 @@ if __name__ == '__main__':
         if orderNum > 0:
             # 是否进行订单合并
             similarSet = []
-            if get_free_rider_num(dataSaver) < 0:
+            if setNum > 100000000000:
                 similarSet = orderProcesser.combine_order(
                         dataSaver
                         )
@@ -95,29 +95,12 @@ if __name__ == '__main__':
             if producer.time > producer.changeTime:
                 # 空闲骑士和订单之间进行打分矩阵的计算
                 dispatcher.init_value()
-                dispatcher.typeDic['riderType'] = 'free'
                 dispatcher.typeDic['aoiType'] = 'same'
                 dispatcher.typeDic['minNumType'] = 'first'
                 ifHas, orderRiderMatrix = dispatcher.rider_order_matrix(
                         dataSaver, similarSet
                         )
                 # 将订单分配给空闲骑士
-                if ifHas:
-                    for aoiId in orderRiderMatrix:
-                        dispatcher.Km_dispatch(
-                                orderRiderMatrix[aoiId],
-                                dataSaver,
-                                munkreser,
-                                similarSet
-                                )
-                # 计算非空闲骑士
-                dispatcher.init_value()
-                dispatcher.typeDic['riderType'] = 'processing'
-                dispatcher.typeDic['aoiType'] = 'same'
-                dispatcher.typeDic['minNumType'] = 'first'
-                ifHas, orderRiderMatrix = dispatcher.rider_order_matrix(
-                        dataSaver, similarSet
-                        )
                 if ifHas:
                     for aoiId in orderRiderMatrix:
                         dispatcher.Km_dispatch(
@@ -129,29 +112,12 @@ if __name__ == '__main__':
             else:
                 # 空闲骑士和订单之间进行打分矩阵的计算
                 dispatcher.init_value()
-                dispatcher.typeDic['riderType'] = 'free'
                 dispatcher.typeDic['aoiType'] = 'same'
                 dispatcher.typeDic['minNumType'] = 'last'
                 ifHas, orderRiderMatrix = dispatcher.rider_order_matrix(
                         dataSaver, similarSet
                         )
                 # 将订单分配给空闲骑士
-                if ifHas:
-                    for aoiId in orderRiderMatrix:
-                        dispatcher.Km_dispatch(
-                                orderRiderMatrix[aoiId],
-                                dataSaver,
-                                munkreser,
-                                similarSet
-                                )
-                # 计算非空闲骑士
-                dispatcher.init_value()
-                dispatcher.typeDic['riderType'] = 'processing'
-                dispatcher.typeDic['aoiType'] = 'same'
-                dispatcher.typeDic['minNumType'] = 'last'
-                ifHas, orderRiderMatrix = dispatcher.rider_order_matrix(
-                        dataSaver, similarSet
-                        )
                 if ifHas:
                     for aoiId in orderRiderMatrix:
                         dispatcher.Km_dispatch(

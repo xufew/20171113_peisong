@@ -64,6 +64,7 @@ def get_score_order_rider(
         riderUseX = riderX
         riderUseY = riderY
         timeUse = timeNow
+        outScore += Config.score_free
     elif riderStatus == 'processing':
         riderUseX = desX
         riderUseY = desY
@@ -117,7 +118,7 @@ def distance_near(
             (float(shopX), float(shopY)), (float(riderUseX), float(riderUseY))
             )
     # 开始评分
-    disScore = 2-shopRiderDis/float(1000)
+    disScore = 1-shopRiderDis/float(1000)
     if disScore < -1:
         disScore = -1
     return disScore
@@ -143,7 +144,9 @@ def exact_finish(
             (float(shopX), float(shopY)), (float(userX), float(userY))
             )/float(riderSpeed)
     atShopTime = timer.add_second_datetime(timeUse, riderToShop)
-    waitShopTime = timer.add_second_datetime(timeUse, waitTime)
+    waitShopTime = timer.add_second_datetime(
+            timer.trans_unix_to_datetime(timeNow), waitTime
+            )
     # 可以完成时间
     if atShopTime >= waitShopTime:
         finishTime = timer.add_second_datetime(atShopTime, shopToUser)

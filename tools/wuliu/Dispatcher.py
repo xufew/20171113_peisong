@@ -23,7 +23,6 @@ class Dispatcher():
     def __init__(self):
         self.groupDic = {}
         self.typeDic = {
-                'riderType': 'free',             # free, processing，派给骑士的类型
                 'aoiType': 'same',               # same,diff，商圈派单类型
                 'minNumType': 'last',            # last,first，不够10单的骑士是否优先
                 }
@@ -40,36 +39,20 @@ class Dispatcher():
         '''
         orderDic = dataSaver.orderDic
         riderFrame = dataSaver.riderFrame
-        if self.typeDic['riderType'] == 'free':
-            # 获取所有待分配订单号
-            if len(orderDic) == 0:
-                return False, 0
-            orderFrame = pd.DataFrame(orderDic)
-            orderList = list(orderFrame.columns)
-            if len(orderList) == 0:
-                return False, 0
-            # 获取所有待分配骑士
-            useFrame = pd.DataFrame(riderFrame).T
-            freeRiderFrame = useFrame.loc[useFrame.loc[:, 'status'] == 'leisure', :]
-            riderList = list(freeRiderFrame.index)
-            if len(riderList) == 0:
-                return False,0
-        if self.typeDic['riderType'] == 'processing':
-            # 获取所有待分配订单号
-            if len(orderDic) == 0:
-                return False, 0
-            orderFrame = pd.DataFrame(orderDic)
-            orderList = list(orderFrame.columns)
-            if len(orderList) == 0:
-                return False, 0
-            # 获取所有待分配骑士
-            useFrame = pd.DataFrame(riderFrame).T
-            con1 = useFrame.status != 'leisure'
-            con2 = useFrame.hasOrderNum == 0
-            hasRiderFrame = useFrame.loc[con1 & con2, :]
-            riderList = list(hasRiderFrame.index)
-            if len(riderList) == 0:
-                return False, 0
+        # 获取所有待分配订单号
+        if len(orderDic) == 0:
+            return False, 0
+        orderFrame = pd.DataFrame(orderDic)
+        orderList = list(orderFrame.columns)
+        if len(orderList) == 0:
+            return False, 0
+        # 获取所有待分配骑士
+        useFrame = pd.DataFrame(riderFrame).T
+        con2 = useFrame.hasOrderNum == 0
+        hasRiderFrame = useFrame.loc[con2, :]
+        riderList = list(hasRiderFrame.index)
+        if len(riderList) == 0:
+            return False, 0
         # 替换并单为group
         for thisList in similarSet:
             thisOrderId = thisList[0]
