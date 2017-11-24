@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 5.7.19)
 # Database: hackathon
-# Generation Time: 2017-11-16 09:42:49 +0000
+# Generation Time: 2017-11-23 08:47:45 +0000
 # ************************************************************
 
 
@@ -19,6 +19,9 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
+
+DROP TABLE IF EXISTS `api_log`;
+DROP TABLE IF EXISTS `check_log`;
 
 # Dump of table order
 # ------------------------------------------------------------
@@ -8152,6 +8155,7 @@ DROP TABLE IF EXISTS `score`;
 CREATE TABLE `score` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `date` varchar(255) DEFAULT NULL,
+  `round` varchar(255) DEFAULT NULL,
   `team` varchar(255) DEFAULT NULL,
   `failed` tinyint(1) DEFAULT NULL,
   `failed_cause` text,
@@ -8160,7 +8164,8 @@ CREATE TABLE `score` (
   `total_exceeds` bigint(20) DEFAULT NULL,
   `total_timeouts` bigint(20) DEFAULT NULL,
   `score_timeout` double DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `IDX_date_round_team` (`date`,`round`,`team`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -8173,6 +8178,7 @@ DROP TABLE IF EXISTS `trace`;
 CREATE TABLE `trace` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `date` varchar(255) DEFAULT NULL,
+  `round` varchar(255) DEFAULT NULL,
   `team` varchar(255) DEFAULT NULL,
   `not_before` bigint(20) DEFAULT NULL,
   `rider_id` bigint(20) DEFAULT NULL,
@@ -8182,7 +8188,8 @@ CREATE TABLE `trace` (
   `mcy` varchar(255) DEFAULT NULL,
   `t` bigint(20) DEFAULT NULL,
   `action` tinyint(4) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `IDX_date_round_team_t` (`date`,`round`,`team`,`t`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 

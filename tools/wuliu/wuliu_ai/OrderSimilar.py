@@ -26,15 +26,33 @@ def cal_order_similar(orderOne, orderTwo, dataSaver):
     user2Y = orderTwo['userMcy']
     yuding1 = orderOne['immediateDeliver']
     yuding2 = orderTwo['immediateDeliver']
+    orderTime1 = orderOne['orderTime']
+    orderTime2 = orderTwo['orderTime']
+    waitTime1 = orderOne['waitSecs']
+    waitTime2 = orderTwo['waitSecs']
     # 不合并预订单
     if (not yuding1) or (not yuding2):
         score += 1*Config.similar_weight_yuding
     # 同店同用户
+    waitShopTime1 = dataSaver.timer.add_second_datetime(
+            dataSaver.timer.trans_unix_to_datetime(orderTime1),
+            waitTime1
+            )
+    waitShopTime2 = dataSaver.timer.add_second_datetime(
+            dataSaver.timer.trans_unix_to_datetime(orderTime2),
+            waitTime2
+            )
+    deltTime = 0
+    if waitShopTime1 >= waitShopTime2:
+        deltTime = (waitShopTime1-waitShopTime2).seconds
+    else:
+        deltTime = (waitShopTime2-waitShopTime1).seconds
     con1 = shop1X == shop2X
     con2 = shop1Y == shop2Y
     con3 = user1X == user2X
     con4 = user1Y == user2Y
-    if con1 and con2 and con3 and con4:
+    con5 = deltTime == 0
+    if con1 and con2 and con3 and con4 and con5:
         score += 1*Config.similar_weight_same_shop_user
     # 商户之间距离比较近(-1,1)
     shopDis = base_few.Mercator.getDistance(

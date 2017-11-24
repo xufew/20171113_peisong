@@ -57,6 +57,8 @@ def get_score_order_rider(
     userY = orderDic[orderId]['userMcy']
     expectTime = orderDic[orderId]['expectTime']
     waitTime = orderDic[orderId]['waitSecs']
+    userAoi = orderDic[orderId]['userAoi']
+    orderTime = orderDic[orderId]['orderTime']
     nowAoi = riderFrame[riderId]['nowAoi']
     riderAoi = riderFrame[riderId]['aoiId']
     # 公用筛选变量
@@ -78,7 +80,7 @@ def get_score_order_rider(
             timeUse, riderSpeed, riderUseX,
             riderUseY, userX, userY, shopX,
             shopY, expectTime, waitTime, timer,
-            timeNow
+            timeNow, orderTime
             )
     outScore += Config.score_exact_finish*exactScore
     outScore += Config.score_time_score*timeScore
@@ -105,6 +107,10 @@ def get_score_order_rider(
         con2 = nowAoi != -1
         if con1 and con2:
             outScore += Config.score_not_same_aoi*1
+    else:
+        con1 = userAoi == riderAoi
+        if con1:
+            outScore += Config.score_same_aoi_small*1
     return outScore
 
 
@@ -127,7 +133,7 @@ def exact_finish(
         timeUse, riderSpeed, riderUseX,
         riderUseY, userX, userY, shopX,
         shopY, expectTime, waitTime, timer,
-        timeNow
+        timeNow, orderTime
         ):
     '''
     骑士可以准时送达和骑士完成所需时间
@@ -145,7 +151,7 @@ def exact_finish(
             )/float(riderSpeed)
     atShopTime = timer.add_second_datetime(timeUse, riderToShop)
     waitShopTime = timer.add_second_datetime(
-            timer.trans_unix_to_datetime(timeNow), waitTime
+            timer.trans_unix_to_datetime(orderTime), waitTime
             )
     # 可以完成时间
     if atShopTime >= waitShopTime:

@@ -20,6 +20,7 @@ def if_add_order(
     if thisRider['status'] == 'processing':
         shopX = orderDic[orderId]['shopMcx']
         shopY = orderDic[orderId]['shopMcy']
+        orderTime = orderDic[orderId]['orderTime']
         routeDic = thisRider['routeDic']
         orderShop = '{}_{}'.format(shopX, shopY)
         riderAoi = thisRider['aoiId']
@@ -34,7 +35,7 @@ def if_add_order(
                     routeDic['shopRoute'][orderShop]
                     )
             chucanTime = timer.add_second_datetime(
-                    timer.trans_unix_to_datetime(nowTime),
+                    timer.trans_unix_to_datetime(orderTime),
                     waitTime
                     )
             if atShopTime >= chucanTime:
