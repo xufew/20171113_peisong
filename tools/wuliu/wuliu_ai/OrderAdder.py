@@ -38,7 +38,9 @@ def if_add_order(
                     timer.trans_unix_to_datetime(orderTime),
                     waitTime
                     )
-            if atShopTime >= chucanTime:
+            con1 = atShopTime >= chucanTime
+            con2 = atShopTime >= timer.trans_unix_to_datetime(nowTime)
+            if con1 and con2:
                 # 判断此骑士配送，和分配给别的骑士配送的收益
                 routeDesUser = max(
                         routeDic['userRoute'],
