@@ -99,12 +99,12 @@ def get_score_order_rider(
         if deltaTime < 0:
             deltaTime = 0
         outScore += Config.score_order_time*deltaTime
-    # if typeDic['aoiType'] == 'same':
-    #     # 骑士商圈和所在位置不符
-    #     con1 = nowAoi != riderAoi
-    #     con2 = nowAoi != -1
-    #     if con1 and con2:
-    #         outScore += Config.score_not_same_aoi*1
+    if typeDic['aoiType'] == 'same':
+        # 骑士商圈和所在位置不符
+        con1 = nowAoi != riderAoi
+        con2 = nowAoi != -1
+        if con1 and con2:
+            outScore += Config.score_not_same_aoi*1
     return outScore
 
 

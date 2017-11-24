@@ -8,7 +8,7 @@ import math
 
 import numpy as np
 import pandas as pd
-from munkres import DISALLOWED
+from scipy.optimize import linear_sum_assignment
 
 from .. import base_few
 import Config
@@ -134,7 +134,8 @@ class Dispatcher():
             return False
         if orderNum <= freeRiderNum:
             # 转换为小的值
-            indexes = munkreser.compute(np.array(noDisMatrix))
+            row_index, col_index = linear_sum_assignment(np.array(noDisMatrix))
+            indexes = [[x, y] for x,y in zip(row_index, col_index)]
             for thisSet in indexes:
                 orderId = orderIdList[thisSet[0]]
                 riderId = riderIdList[thisSet[1]]
@@ -146,7 +147,8 @@ class Dispatcher():
                     dataSaver.dispatch_order(orderId, riderId)
         else:
             noDisMatrix = noDisMatrix.T
-            indexes = munkreser.compute(np.array(noDisMatrix))
+            row_index, col_index = linear_sum_assignment(np.array(noDisMatrix))
+            indexes = [[x, y] for x,y in zip(row_index, col_index)]
             for thisSet in indexes:
                 orderId = orderIdList[thisSet[1]]
                 riderId = riderIdList[thisSet[0]]
