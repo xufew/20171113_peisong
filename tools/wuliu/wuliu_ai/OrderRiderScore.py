@@ -97,7 +97,7 @@ def get_score_order_rider(
         deltaTime = 1-(
                 timer.trans_unix_to_datetime(expectTime)-
                 timer.trans_unix_to_datetime(timeNow)
-                ).seconds/float(60)/40
+                ).seconds/float(60)/120
         if deltaTime < 0:
             deltaTime = 0
         outScore += Config.score_order_time*deltaTime
