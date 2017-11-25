@@ -22,7 +22,7 @@ order_time_count = 60                           # 计算dis分布的时间间隔
 change_rider_Num = 500                          # 剩多少订单，可以进入满足10单的要求
 yuding_time_thres = 1500                        # 预订单离预期时间剩多久进入派单流程
 yuding_wait = 300                               # 预订单不能在这之前完成
-putong_wait = 0                               # 大于多少秒算超时
+putong_wait = 299                               # 大于多少秒算超时
 
 # 追加订单距离阈值
 add_weight_dis_thres = 500
@@ -52,3 +52,4 @@ score_not_same_aoi = 8
 score_same_aoi_small = 2
 score_order_time = 0
 score_free = 2
+score_speed = -0.5

@@ -111,6 +111,9 @@ def get_score_order_rider(
         con1 = userAoi == riderAoi
         if con1:
             outScore += Config.score_same_aoi_small*1
+    # 都可以完成的话，速度决定
+    speedScore = riderSpeed/8.0
+    outScore += Config.score_speed*speedScore
     return outScore
 
 
