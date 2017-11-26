@@ -26,6 +26,7 @@ class DataSaver():
         self.yuyueDic = {}
         self.processingDic = {}
         self.finishDic = {}
+        self.waitDic = {}
         self.time = 0
         self.timer = base_few.Timer()
 
@@ -236,3 +237,48 @@ class DataSaver():
         useDic = self.orderDic[orderId].copy()
         self.orderDic.pop(orderId)
         self.processingDic[orderId] = useDic
+
+    def check_wait_time(self):
+        '''
+        检查等待出餐时间还剩很多的订单，先丢入等待dic
+        '''
+        # 将等餐时间长的订单取出
+        removeList = []
+        orderList = list(self.orderDic.keys())
+        for orderId in orderList:
+            orderTime = self.timer.trans_unix_to_datetime(
+                    self.orderDic[orderId]['orderTime']
+                    )
+            waitSecs = self.orderDic[orderId]['waitSecs']
+            waitTime = self.timer.add_second_datetime(orderTime, waitSecs)
+            nowTime = self.timer.trans_unix_to_datetime(self.time)
+            if waitTime>=nowTime:
+                delta = (waitTime-nowTime).seconds
+            else:
+                delta = 0
+            if delta > Config.wait_process_thres:
+                removeList.append(orderId)
+        for orderId in removeList:
+            orderDic = self.orderDic[orderId].copy()
+            self.waitDic[orderId] = orderDic
+            self.orderDic.pop(orderId)
+        # 检查是否有等餐订单可以取出
+        removeList = []
+        orderList = list(self.waitDic.keys())
+        for orderId in orderList:
+            orderTime = self.timer.trans_unix_to_datetime(
+                    self.waitDic[orderId]['orderTime']
+                    )
+            waitSecs = self.waitDic[orderId]['waitSecs']
+            waitTime = self.timer.add_second_datetime(orderTime, waitSecs)
+            nowTime = self.timer.trans_unix_to_datetime(self.time)
+            if waitTime>=nowTime:
+                delta = (waitTime-nowTime).seconds
+            else:
+                delta = 0
+            if delta < Config.wait_process_thres:
+                removeList.append(orderId)
+        for orderId in removeList:
+            orderDic = self.waitDic[orderId].copy()
+            self.orderDic[orderId] = orderDic
+            self.waitDic.pop(orderId)

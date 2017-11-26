@@ -86,6 +86,8 @@ if __name__ == '__main__':
         # 取信息,每分钟的订单
         dataSaver.time = producer.time
         dataSaver.save_order_info(orderValue)
+        # 检查是否有等餐时长过长的订单
+        dataSaver.check_wait_time()
         # 检查是否有预约单可以进入派单流程
         dataSaver.check_yuyue_order()
         # 进行追加，正在配送中的订单

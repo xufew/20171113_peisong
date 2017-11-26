@@ -23,6 +23,7 @@ change_rider_Num = 500                          # 剩多少订单，可以进入
 yuding_time_thres = 1550                        # 预订单离预期时间剩多久进入派单流程
 yuding_wait = 300                               # 预订单不能在这之前完成
 putong_wait = 299                               # 大于多少秒算超时
+wait_process_thres = 1100                       # 等餐时间过长的订单多少秒开始处理
 
 # 追加订单距离阈值
 add_weight_dis_thres = 500
@@ -45,11 +46,11 @@ combine_score_thres = 3
 # 骑士打分权重
 score_distance = 0
 score_not_ten = 8
-score_not_ten_small = 0.5
-score_exact_finish = 3
+score_not_ten_small = 0.2
+score_exact_finish = 3.1
 score_time_score = 5.5
 score_not_same_aoi = 8
-score_same_aoi_small = 2
+score_same_aoi_small = 1.9
 score_order_time = 0
 score_free = 2
-score_speed = -0.5
+score_speed = -0.6
