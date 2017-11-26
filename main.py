@@ -39,20 +39,20 @@ def set_produce_order_num(orderSer, producer):
     setNum = 1
     if orderValue == 0:
         setNum = Config.order_time_count
-    # elif orderValue <= 5:
-    #     setNum = 1
-    # elif orderValue <= 7:
-    #     setNum = 60
-    # else:
-    #     setNum = 60
-    con1 = time.localtime(nowTime).tm_hour >=11
-    con2 = time.localtime(nowTime).tm_hour <13
-    if con1 and con2:
+    elif orderValue <= 5:
+        setNum = 1
+    elif orderValue <= 7:
         setNum = 60
-    con1 = time.localtime(nowTime).tm_hour >=18
-    con2 = time.localtime(nowTime).tm_hour <20
-    if con1 and con2:
+    else:
         setNum = 60
+    # con1 = time.localtime(nowTime).tm_hour >=11
+    # con2 = time.localtime(nowTime).tm_hour <13
+    # if con1 and con2:
+    #     setNum = 60
+    # con1 = time.localtime(nowTime).tm_hour >=18
+    # con2 = time.localtime(nowTime).tm_hour <20
+    # if con1 and con2:
+    #     setNum = 60
     return setNum
 
 
