@@ -19,7 +19,8 @@ oper_info_test = '{}/out/oper_info_test'.format(ABS_PATH)
 # 拉取订单间隔(秒)
 order_time_range = 60
 order_time_count = 60                           # 计算dis分布的时间间隔
-change_rider_Num = 500                          # 剩多少订单，可以进入满足10单的要求 yuding_time_thres = 1550                        # 预订单离预期时间剩多久进入派单流程
+change_rider_Num = 500                          # 剩多少订单，可以进入满足10单的要求
+yuding_time_thres = 1550                        # 预订单离预期时间剩多久进入派单流程
 yuding_wait = 300                               # 预订单不能在这之前完成
 putong_wait = 299                               # 大于多少秒算超时
 
