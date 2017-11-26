@@ -110,15 +110,17 @@ class Dispatcher():
                     outMatrixDic[orderAoi][thisOrder][thisRider] = thisScore
         for aoiId in outMatrixDic:
             outMatrixDic[aoiId] = pd.DataFrame(outMatrixDic[aoiId]).T
-        # # 剔除一些不符合情况的空闲骑士
-        # if self.typeDic['riderType'] == 'free':
-        #     for matrixIndex in outMatrixDic:
-        #         thisMatrix = outMatrixDic[matrixIndex].copy()
-        #         if(thisMatrix.shape[1] < 100):
-        #             canSendMatrix = (thisMatrix>3).any(axis=0)
-        #             thisMatrix = thisMatrix.loc[:, canSendMatrix]
-        #             outMatrixDic[matrixIndex] = thisMatrix
-        return True, outMatrixDic
+        # 剔除一些不符合情况的空闲骑士
+        cannotDic = {}
+        for matrixIndex in outMatrixDic:
+            thisMatrix = outMatrixDic[matrixIndex].copy()
+            canSendMatrix = (thisMatrix>-100).any(axis=1)
+            cannotMatrix = (thisMatrix<-100).all(axis=1)
+            thisCannot = thisMatrix.loc[cannotMatrix, :].copy()
+            thisMatrix = thisMatrix.loc[canSendMatrix, :]
+            outMatrixDic[matrixIndex] = thisMatrix
+            cannotDic[matrixIndex] = thisCannot
+        return True, outMatrixDic, cannotDic
 
 
     def Km_dispatch(self, orderRiderMatrix, dataSaver, munkreser, similarSet):
@@ -193,3 +195,56 @@ class Dispatcher():
                             orderAoi,
                             )
                     break
+
+    def dispatch_bad(self, orderFrame, dataSaver):
+        '''
+        配送差的订单，肯定无法完成
+        '''
+        if orderFrame.shape[0] != 0:
+            orderIdList = list(orderFrame.index)
+            removeList = []
+            for orderId in orderIdList:
+                shopX = dataSaver.orderDic[orderId]['shopMcx']
+                shopY = dataSaver.orderDic[orderId]['shopMcy']
+                waitSecs = dataSaver.orderDic[orderId]['waitSecs']
+                userX = dataSaver.orderDic[orderId]['userMcx']
+                userY = dataSaver.orderDic[orderId]['userMcy']
+                orderTime = dataSaver.orderDic[orderId]['orderTime']
+                chooseDic = {}
+                for riderId in dataSaver.riderFrame:
+                    if riderId in removeList:
+                        continue
+                    riderStatus = dataSaver.riderFrame[riderId]['status']
+                    hasOrderNum = dataSaver.riderFrame[riderId]['hasOrderNum']
+                    riderSpeed = float(dataSaver.riderFrame[riderId]['speed'])
+                    con1 = riderStatus == 'leisure'
+                    con2 = riderStatus == 'processing'
+                    con3 = hasOrderNum == 0
+                    if con1:
+                        riderX = dataSaver.riderFrame[riderId]['mcx']
+                        riderY = dataSaver.riderFrame[riderId]['mcy']
+                        nowTime = dataSaver.time
+                    if con2 and con3:
+                        riderX = dataSaver.riderFrame[riderId]['desX']
+                        riderY = dataSaver.riderFrame[riderId]['desY']
+                        nowTime = dataSaver.riderFrame[riderId]['finishTime']
+                    if con1 or (con2 and con3):
+                        riderShopTime = nowTime+base_few.Mercator.getDistance(
+                                [float(riderX), float(riderY)],
+                                [float(shopX), float(shopY)],
+                                )/riderSpeed
+                        waitTime = orderTime+waitSecs
+                        if riderShopTime>waitTime:
+                            shopUseTime = riderShopTime
+                        else:
+                            shopUseTime = waitTime
+                        totalTime = shopUseTime+base_few.Mercator.getDistance(
+                                [float(userX), float(userY)],
+                                [float(shopX), float(shopY)],
+                                )/riderSpeed
+                        chooseDic[riderId] = totalTime
+                if len(chooseDic) != 0:
+                    useRiderIndex = min(chooseDic, key=chooseDic.get)
+                    dataSaver.dispatch_order(orderId, useRiderIndex)
+                    removeList.append(useRiderIndex)
+                    print(orderId, useRiderIndex)

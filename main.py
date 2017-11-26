@@ -81,7 +81,7 @@ if __name__ == '__main__':
         operRecorder.init_value()
         # 计算商圈压力，并设置对应的压单量
         setNum = set_produce_order_num(orderSer, producer)
-        # setNum = 3000
+        # setNum = 240
         orderValue = producer.produce_order(setNum)
         # 取信息,每分钟的订单
         dataSaver.time = producer.time
@@ -93,7 +93,7 @@ if __name__ == '__main__':
         # 进行追加，正在配送中的订单
         dispatcher.dispatch_add(dataSaver, operRecorder)
         orderNum = len(dataSaver.orderDic)
-        print(orderNum)
+        # print(orderNum)
         if orderNum > 0:
             # 是否进行订单合并
             similarSet = []
@@ -108,9 +108,12 @@ if __name__ == '__main__':
                 dispatcher.init_value()
                 dispatcher.typeDic['aoiType'] = 'same'
                 dispatcher.typeDic['minNumType'] = 'first'
-                ifHas, orderRiderMatrix = dispatcher.rider_order_matrix(
+                ifHas, orderRiderMatrix, cannotDic = dispatcher.rider_order_matrix(
                         dataSaver, similarSet
                         )
+                # 将垃圾单分配给最好的骑士
+                for aoiId in cannotDic:
+                    dispatcher.dispatch_bad(cannotDic[aoiId], dataSaver)
                 # 将订单分配给空闲骑士
                 if ifHas:
                     for aoiId in orderRiderMatrix:
@@ -125,9 +128,12 @@ if __name__ == '__main__':
                 dispatcher.init_value()
                 dispatcher.typeDic['aoiType'] = 'diff'
                 dispatcher.typeDic['minNumType'] = 'last'
-                ifHas, orderRiderMatrix = dispatcher.rider_order_matrix(
+                ifHas, orderRiderMatrix, cannotDic = dispatcher.rider_order_matrix(
                         dataSaver, similarSet
                         )
+                # 将垃圾单分配给最好的骑士
+                for aoiId in cannotDic:
+                    dispatcher.dispatch_bad(cannotDic[aoiId], dataSaver)
                 # 将订单分配给空闲骑士
                 if ifHas:
                     for aoiId in orderRiderMatrix:

@@ -75,8 +75,8 @@ def get_score_order_rider(
     outScore += Config.score_distance*distance_near(
             shopX, shopY, riderStatus, riderUseX, riderUseY
             )
-    # 骑士接了此单之后，是否可以准时完成此单, timeScore:-1~1
-    exactScore, timeScore = exact_finish(
+    # 骑士接了此单之后，是否可以准时完成此单
+    exactScore, timeScore, orderUseTime = exact_finish(
             timeUse, riderSpeed, riderUseX,
             riderUseY, userX, userY, shopX,
             shopY, expectTime, waitTime, timer,
@@ -84,6 +84,9 @@ def get_score_order_rider(
             )
     outScore += Config.score_exact_finish*exactScore
     outScore += Config.score_time_score*timeScore
+    # 如果是垃圾单，增加点优先处理权
+    if orderUseTime > 2500:
+        outScore -= 10
     # 最后满足条件特定
     if typeDic['minNumType'] == 'first':
         # 骑士不够10单
@@ -168,4 +171,6 @@ def exact_finish(
     timeScore = 1-totalTime/60.0/30.0
     if timeScore < -1:
         timeScore = -1
-    return exactScore, timeScore
+    # 订单实际配送时间
+    orderUseTime = (finishTime-timer.trans_unix_to_datetime(orderTime)).seconds
+    return exactScore, timeScore, orderUseTime
